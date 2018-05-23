@@ -1,0 +1,9 @@
+(jbuild_version 1)
+
+(library 
+ ((name        utils)
+  (public_name utils)
+  (modules (prob genl))
+  (libraries (batteries core owl))
+  (ocamlopt_flags (:standard -O3)) ; -dcmm -O3 ; -dcmm dumps intermediate rep
+  ))
