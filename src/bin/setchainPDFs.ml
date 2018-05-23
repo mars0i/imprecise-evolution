@@ -85,7 +85,7 @@ let commandline =
 
       Printf.printf "making lazy prob intervals list ... %!";
       let tdistlists = T.add_gens (SC.lazy_prob_intervals_from_freq initfreq bounds_mats) in
-      let selected_gens = G.lazy_ints ~skip:skip 1 in (* 1, i.e. don't display initial dist 0 massed on initfreq *)
+      let selected_gens = T.lazy_ints ~skip:skip 1 in (* 1, i.e. don't display initial dist 0 massed on initfreq *)
       let selected_tdistlists = T.sublist startgen lastgen (T.select_by_gens selected_gens tdistlists) in
 
       Printf.printf "making pdfs ... \n%!";

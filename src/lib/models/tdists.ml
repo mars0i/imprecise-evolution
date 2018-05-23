@@ -26,12 +26,14 @@ let is_empty = LL.is_empty
 let at = LL.at
 let fold_left = LL.fold_left
 let map = LL.map
+let map2 = LL.map2
 let seq = LL.seq
 let cons = LL.cons
 let fold_right = LL.lazy_fold_right
 let take = LL.take
 let take_while = LL.take_while
 let drop = LL.drop
+let drop_while = LL.drop_while
 let to_list = LL.to_list
 let rev = LL.rev
 let from_loop = LL.from_loop
@@ -233,6 +235,33 @@ let pri_f_field_uppers omega_max atom_mins atom_maxs =
   let maxmaxs = L.map2 min maxs inverted_mins in
   L.combine (at algebra_sets omega_max) maxmaxs
 
+(* Transform lazy lists of dists to/from lazy lists of tdists: *)
+
+let ints_from n = seq n ((+) 1) always_true
+
+let add_gens ?(first_tick=0) dists_llist =
+  map2 make (ints_from first_tick) dists_llist
+
+let remove_gens tdists_llist = map dists tdists_llist
+
+(** [sublist start_t finish_t tdists_llist] returns a lazy list that's
+    a finite sublist of [tdists_llist], from the first element with 
+    [gen] >= [start_gen] to the last element with [gen] <= [finish_gen].  
+    Note that if the list is infinite and there are no elements satisfying
+    both of these conditions, the function will try to run forever. *)
+let sublist start_gen finish_gen tdists_llist =
+  take_while (fun tds -> tds.gen <= finish_gen)
+                (drop_while (fun tds -> tds.gen < start_gen)
+		               tdists_llist)
+
+(** In [select_by_gens generations tdists_llist], [generations] is a lazy
+    list of integers in increasing order, and [tdists_llist] is a lazy
+    list of tdists.  The function returns a lazy list contanining those 
+    tdists whose generation numbers match the integers in [generations]. *)
+let select_by_gens generations tdists_llist =
+  lazy_select gen generations tdists_llist
+
+
 (*
 
 (*********** Strings for printing **********)
@@ -313,31 +342,5 @@ let generate_system omega_size num_dists =
    (f_uppers, f_maxs, f_inverted_mins),
    f_intervals)
 
-
-
-(* Transform lazy lists of dists to/from lazy lists of tdists: *)
-let ints_from n = seq n ((+) 1) always_true
-
-let add_gens ?(first_tick=0) dists_llist =
-  map2 make (ints_from first_tick) dists_llist
-
-let remove_gens tdists_llist = map dists tdists_llist
-
-(** [sublist start_t finish_t tdists_llist] returns a lazy list that's
-    a finite sublist of [tdists_llist], from the first element with 
-    [gen] >= [start_gen] to the last element with [gen] <= [finish_gen].  
-    Note that if the list is infinite and there are no elements satisfying
-    both of these conditions, the function will try to run forever. *)
-let sublist start_gen finish_gen tdists_llist =
-  take_while (fun tds -> tds.gen <= finish_gen)
-                (drop_while (fun tds -> tds.gen < start_gen)
-		               tdists_llist)
-
-(** In [select_by_gens generations tdists_llist], [generations] is a lazy
-    list of integers in increasing order, and [tdists_llist] is a lazy
-    list of tdists.  The function returns a lazy list contanining those 
-    tdists whose generation numbers match the integers in [generations]. *)
-let select_by_gens generations tdists_llist =
-  G.lazy_select gen generations tdists_llist
 
 *)
