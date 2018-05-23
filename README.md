@@ -7,6 +7,8 @@ probability](https://en.wikipedia.org/wiki/Imprecise_probability) and
 [Owl](https://github.com/ryanrhymes/owl) and other libraries.
 Experimental work in progress.
 
+(This page needs revision.)
+
 Some of this will be reorganized in the future.  Some of it was
 written when I was learning OCaml.  (I am still learning OCaml.)
 
