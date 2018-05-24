@@ -14,8 +14,6 @@ module T = Tdists
 
 let ( *@ ) = Mat.( *@ )  (* = dot: matrix multiplication *)
 
-let always_true _ = true
-
 (** Given a list of transition matrices, mats, and a list of
     probability distributions, dists, returns a new list of
     probability distributions produced by multiplying all
@@ -35,4 +33,4 @@ let next_dists tranmats dists =
     will produce 2**1 = 2 dists.  Or with more initial distributions, the
     number of dists at n is (length init_dists) * (length tranmats)**n . *)
 let make_distlists_from_mats tranmats init_dists =
-  T.seq init_dists (next_dists tranmats) always_true
+  T.iterate init_dists (next_dists tranmats)

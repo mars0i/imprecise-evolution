@@ -332,7 +332,7 @@ let next_bounds_mats ?(fork=true) pmat qmat p_row_sums q_row_sums (lo,hi) =
     by [qmat] *)
 let lazy_bounds_mats_list ?(fork=true) pmat qmat =
   let p_row_sums, q_row_sums = M.sum_cols pmat, M.sum_cols qmat in (* sum_cols means add col vecs, = new col vec w/ sum of ea row *)
-  T.seq (pmat, qmat) (next_bounds_mats ~fork pmat qmat p_row_sums q_row_sums) always
+  T.iterate (pmat, qmat) (next_bounds_mats ~fork pmat qmat p_row_sums q_row_sums)
 
 (** Convenience version of lazy_bounds_mats_list that takes
     (pmat, qmat) as argument rather than pmat and qmat. *)

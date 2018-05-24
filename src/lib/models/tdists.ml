@@ -2,7 +2,7 @@ module Mat = Owl.Mat
 module L = Batteries.List
 module LL = Batteries.LazyList
 
-let always_true _ = true
+let always _ = true
 
 type tdists = {gen : int ; dists : Mat.mat list}
 
@@ -26,7 +26,8 @@ let at = LL.at
 let fold_left = LL.fold_left
 let map = LL.map
 let map2 = LL.map2
-let seq = LL.seq
+let iterate init fn = LL.seq init fn always
+  (* version for Core.Sequence: let iterate init fn = S.memoize (S.unfold init (fun x -> Some (x, fn x))) *)
 let cons = LL.cons
 let fold_right = LL.lazy_fold_right
 let take = LL.take
@@ -55,7 +56,7 @@ let lazy_range ?(step=1) start stop =
     defaults to 1.  Giving it a negative value will produce a
     descending sequence. *)
 let lazy_ints ?(skip=1) init_n =
-  seq init_n (fun n -> n + skip) always_true
+  iterate init_n (fun n -> n + skip)
 
 (** In [lazy_select accessor keys data], [keys] and [data] are lazy
     lists.  The function returns a lazy list of elements from [data]
@@ -87,8 +88,8 @@ let lazy_select accessor keys data =
     constructing lazy lists, one must use [Cons] and [nil] rather than
     [cons] and [nil], as with the [LazyList] eager fold functions:
     {[
-      let natnos = seq 0 ((+) 1) (fun _ -> true);;
-      let posints = seq 1 ((+) 1) (fun _ -> true);;
+      let natnos = iterate 0 ((+) 1)
+      let posints = iterate 1 ((+) 1)
       let prods = lazy_fold_right2 (fun x y acc -> Cons(x*y, acc)) natnos posints TL.nil;;
       (to_list (take 10 prods));;
       - : int list = [0; 2; 6; 12; 20; 30; 42; 56; 72; 90]
@@ -236,7 +237,7 @@ let pri_f_field_uppers omega_max atom_mins atom_maxs =
 
 (* Transform lazy lists of dists to/from lazy lists of tdists: *)
 
-let ints_from n = seq n ((+) 1) always_true
+let ints_from n = iterate n ((+) 1) 
 
 let add_gens ?(first_tick=0) dists_llist =
   map2 make (ints_from first_tick) dists_llist
