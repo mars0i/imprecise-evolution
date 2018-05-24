@@ -23,20 +23,20 @@ let last = LL.last
 let next = LL.next
 let is_empty = LL.is_empty
 let at = LL.at
+let cons = LL.cons
 let fold_left = LL.fold_left
+let fold_right = LL.lazy_fold_right
 let map = LL.map
 let map2 = LL.map2
+let from_loop = LL.from_loop
 let iterate init fn = LL.seq init fn always
   (* version for Core.Sequence: let iterate init fn = S.memoize (S.unfold init (fun x -> Some (x, fn x))) *)
-let cons = LL.cons
-let fold_right = LL.lazy_fold_right
 let take = LL.take
 let take_while = LL.take_while
 let drop = LL.drop
 let drop_while = LL.drop_while
 let to_list = LL.to_list
 let rev = LL.rev
-let from_loop = LL.from_loop
 let nil = LL.nil
 
 
