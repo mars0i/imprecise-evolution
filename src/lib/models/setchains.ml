@@ -13,7 +13,7 @@ module T = Tdists
 (** One goal here is to create a "distlist", which is a LazyList of Lists 
     Owl row vector matrices representing probability distributions over 
     possible frequencies of alleles (or other organism types0 in a population. 
-    The basic distlist creation functions are in tranmats.ml, but this module
+    The basic distlist creation functions are in tdists.ml, but this module
     uses higher-level functions in Wrightfisher to create distlists. *)
 
 (************************************************************)
@@ -431,7 +431,7 @@ fold_right (fun x ys -> let {a; b} = hd ys in {a=(a+1); b=x}::ys) z [{a=0;b=0}];
 
 (** USAGE EXAMPLES: 
      module S = Models.Setchains;;
-     module T = Models.Tranmats;;
+     module T = Models.Tdists
      module W = Models.Wrightfisher;;
      let pmat, qmat = W.(S.make_wf_interval 100 [{w11=1.0; w12=0.5; w22=0.3}; {w11=0.2; w12=0.9; w22=1.0}]);;
      let bounds_mats = S.lazy_bounds_mats_list pmat qmat;;
