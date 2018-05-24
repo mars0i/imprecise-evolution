@@ -1,9 +1,0 @@
-(jbuild_version 1)
-
-(executables
- ((names (test2))
-	(public_names (test2))
-  (package yo)
-  (libraries (owl bigarray hdf5_caml))
-  (modes (native))
- ))
