@@ -10,7 +10,6 @@ module SC = Models.Setchains
 module WF = Models.Wrightfisher
 module IO = Models.CredalsetIO
 module T = Models.Tdists
-module G = Utils.Genl
 module Pl = Owl.Plot
 
 (* TODO: 
