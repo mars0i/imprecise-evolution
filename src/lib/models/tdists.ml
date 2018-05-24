@@ -104,13 +104,6 @@ let lazy_fold_right2 f l1 l2 init_val =
   in
 aux l1 l2
 
-
-
-
-
-
-
-
 (** Convenience abbreviation for [LazyList.(to_list (take n lazy_list))] *)
 let take2list n lazy_list = (to_list (take n lazy_list))
 
