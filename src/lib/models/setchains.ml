@@ -6,7 +6,7 @@ module A = Batteries.Array
 module M = Owl.Mat
 module Pmap = Parmap
 
-module U = Utils.Genl
+module G = Utils.Genl
 module WF = Wrightfisher
 module T = Tdists
 
@@ -46,7 +46,7 @@ let sanity_check_vec_interval p q =
   if p_shape <> (M.shape q) then raise (Failure "Vectors aren't same size");
   if (M.sum' p) > 1. then raise (Failure "Low vector sums to > 1");
   if (M.sum' q) < 1. then raise (Failure "High vector sums to < 1");
-  if M.exists U.float_is_negative M.(q - p) then raise (Failure "High vector is not >= p vector everywhere");
+  if M.exists G.float_is_negative M.(q - p) then raise (Failure "High vector is not >= p vector everywhere");
   () (* redundant clarification *)
 
 (************************************************************)
@@ -119,7 +119,7 @@ let vertices_at p q i =
   let sums = L.map (fun seq -> 1. -. (L.fsum seq)) seqs in
   let add_vertex sum seq acc =
     if sum >= min_at && sum <= max_at (* assume min >= 0, but note slop above. *)
-    then (U.insert_before i sum seq)::acc else acc
+    then (G.insert_before i sum seq)::acc else acc
   in L.fold_right2 add_vertex sums seqs []
 
 (** Given the vector boundaries of an interval, lists its vertices assuming 
@@ -133,7 +133,7 @@ let list_vertices ?digits ?uniq p q =
   let verts = L.concat (L.map (vertices_at p q) idxs) in
   let verts' = match digits with
                | None -> verts
-               | Some digs -> U.mapmap (U.roundto digs) verts
+               | Some digs -> G.mapmap (G.roundto digs) verts
   in match uniq with
   | None | Some false -> verts'
   | Some true -> L.unique_cmp verts'
@@ -147,10 +147,10 @@ let verts3 = list_vertices ~digits:3 ~uniq:true
  * for list_vertices for additional information, including info on optional
  * args. *)
 let vec_vertices ?digits ?uniq p q =
-  L.map U.list_to_vec (list_vertices ?digits ?uniq p q)
+  L.map G.list_to_vec (list_vertices ?digits ?uniq p q)
 
 let vec2vec_vertices ?digits ?uniq p q =
-  vec_vertices ?digits ?uniq (U.vec_to_list p) (U.vec_to_list q)
+  vec_vertices ?digits ?uniq (G.vec_to_list p) (G.vec_to_list q)
 
 (** Given a min and max matrices p and q for a tight interval, return a list of
     vertex matrices.  See documentation for list_vertices for additional info *)
@@ -254,7 +254,7 @@ let recombine relation p q p_sum idxs =
     to avoid repeatedly performing the same computations.) Used by [_hilo_mult].  
     SEE doc/nonoptimizedcode.ml for an older, perhaps clearer version.  *)
 let calc_bound_val recomb pmat qmat prev_bound_mat pmat_row_sums prev_mat_idx_lists width idx =
-  let i, j = U.flat_idx_to_rowcol width idx in
+  let i, j = G.flat_idx_to_rowcol width idx in
   let p_row_sum = M.get pmat_row_sums i 0 in
   let idxs = A.get prev_mat_idx_lists j in
   let p_row, q_row = M.row pmat i, M.row qmat i in (* row doesn't copy; it just provides a view *)
