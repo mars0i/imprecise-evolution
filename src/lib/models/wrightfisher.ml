@@ -11,7 +11,6 @@ module Mat = Owl.Mat
 module Stats = Owl.Stats
 
 module TM = Tranmats
-module U = Utils.Genl
 
 (** One goal here is to create a "distslist", which is a lazy list of Lists 
     Owl row vector matrices representing probability distributions over 

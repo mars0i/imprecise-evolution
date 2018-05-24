@@ -1,7 +1,6 @@
 module Mat = Owl.Mat
 module L = Batteries.List
 module LL = Batteries.LazyList
-module G = Utils.Genl
 
 let always_true _ = true
 
@@ -90,7 +89,7 @@ let lazy_select accessor keys data =
     {[
       let natnos = seq 0 ((+) 1) (fun _ -> true);;
       let posints = seq 1 ((+) 1) (fun _ -> true);;
-      let prods = G.lazy_fold_right2 (fun x y acc -> Cons(x*y, acc)) natnos posints TL.nil;;
+      let prods = lazy_fold_right2 (fun x y acc -> Cons(x*y, acc)) natnos posints TL.nil;;
       (to_list (take 10 prods));;
       - : int list = [0; 2; 6; 12; 20; 30; 42; 56; 72; 90]
     ]} *)
