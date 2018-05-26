@@ -6,39 +6,12 @@
 
 module Command = Core.Command
 module Spec = Core.Command.Spec
-module SC = Models.Setchains
-module WF = Models.Wrightfisher
-module IO = Models.CredalsetIO
-module T = Models.Tdists
-module Pl = Owl.Plot
+module Main = Models.Main
 
 (* TODO: 
  * Add option to control fill color.
  * Add option to control number of pmap forks.
  *)
-
-let bottom_top_colors=Pl.[RGB (0,0,200); RGB (200,0,0)]
-
-let make_setchain_and_save rows cols plot_max fontsize sample skip updown nofork basename popsize initfreq startgen lastgen fitn_floats () =
-  let fitn_recs = WF.group_fitns fitn_floats in  (* parse groups of three floats into separate fitness records *)
-
-  Printf.printf "making matrix interval ... %!";
-  let pmat, qmat = SC.make_wf_interval popsize fitn_recs in
-
-  (* Printf.printf "\n%B\n" (pmat = qmat); (* DEBUG *) *)
-
-  Printf.printf "making lazy bounds mats list ... %!";
-  let bounds_mats =  SC.lazy_bounds_mats_list ~fork:(not nofork) pmat qmat in
-
-  Printf.printf "making lazy prob intervals list ... %!";
-  let tdistlists = T.add_gens (SC.lazy_prob_intervals_from_freq initfreq bounds_mats) in
-  let selected_gens = T.lazy_ints ~skip:skip 1 in (* 1, i.e. don't display initial dist 0 massed on initfreq *)
-  let selected_tdistlists = T.sublist startgen lastgen (T.select_by_gens selected_gens tdistlists) in
-
-  Printf.printf "making pdfs ... \n%!";
-  IO.make_setchain_bounds_pdfs ~colors:bottom_top_colors
-                ~rows ~cols ~sample_interval:sample ?plot_max ?fontsize ~leftright:(not updown)
-                basename selected_tdistlists
 
 
 let sprintf = Printf.sprintf
@@ -93,6 +66,6 @@ let commandline =
                 +> anon ("startgen" %: int)
                 +> anon ("lastgen" %: int)
                 +> anon (sequence ("fitn" %: float)))
-    make_setchain_and_save
+    Main.make_setchain_and_save_for_commandline
 
-let () = Command.run ~version:"1.1" ~build_info:"setchainPDFS, (c) 2017, 2018 Marshall Abrams" commandline
+let () = Command.run ~version:"1.2" ~build_info:"setchainPDFS, (c) 2017, 2018 Marshall Abrams" commandline
