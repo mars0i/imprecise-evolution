@@ -17,7 +17,7 @@ module T = Tdists
     uses higher-level functions in Wrightfisher to create distlists. *)
 
 (************************************************************)
-(** Utility helper functions *)
+(** Utility helper functions, etc. *)
 
 let always _ = true
 
@@ -214,6 +214,14 @@ let idx_sort_colvec v =
     require arguments in a different order depending on which function 
     is passed.  *)
 
+let dummy_mat = M.create 1 1 0.
+
+(** Ref to an ntuple that can be filled with error-causng data from the 
+    internal state in recombine when there's a failure in in it. *)
+type bad_recombine_data_type = {p : M.mat; q : M.mat; p_sum : float; idxs: int list; idxs' : int list; psum : float; pbar : M.mat}
+let bad_recombine_data = ref {p = dummy_mat; q = dummy_mat; p_sum = 0.; idxs = [0]; idxs' = [0]; psum = 0.; pbar = dummy_mat}
+(* This works because Owl matrices are not typed by their dimensions. *)
+
 (* This version of recombine uses a suggestion by Evik Tak: https://stackoverflow.com/a/46127060/1455243 *)
 (** This function is at the core of the hi-lo method.
     Given a relation (>=), a column l vec and two tight row vecs p and q s.t. 
@@ -224,8 +232,6 @@ let idx_sort_colvec v =
     p and q in Hartfiel, i.e. here the arguments should be (<=), l, q, p
     according to the normal senses of p and q. *)
 let recombine relation p q p_sum idxs =
-  (* This was a mistake because sometimes both p and q are nothing but a single 1.0 entry with zeros: *)
-  (* if p = q then raise (Failure "recombine: Lower and upper tran matrices are identical"); *)
   let pbar = M.copy p in  (* p was created using M.row, so it's a view not a copy. *)
   let rec find_crossover idxs' psum =
     match idxs' with
@@ -237,10 +243,14 @@ let recombine relation p q p_sum idxs =
         then M.set pbar 0 i (1. -. sum_rest) (* return--last iter put it over/under *)
         else (M.set pbar 0 i qi;             (* still <= 1, or >=1; try next one *)
               find_crossover idxs'' sum_rest_plus_qi) 
-    | [] -> raise (Failure "recombine: bad vectors") (* Should never happen: It means we didn't find a crossover point. *)
+    | [] -> (bad_recombine_data := {p; q; p_sum; idxs; idxs'; psum}; (* Should never happen: It means we didn't find a crossover point. *)
+             raise (Failure "recombine: Can't find crossover. Current data in Setchains.bad_recombine_data."))
   in 
   find_crossover idxs p_sum;
   pbar
+(* NOTE At one point I included the following line at the beginning of `recombine`.
+   It was a mistake because sometimes both p and q are nothing but a single 1.0 entry with zeros elsewhere:
+	if p = q then raise (Failure "recombine: Lower and upper tran matrices are identical"); *)
 
 (** Given a [recomb] function, the original P and Q matrices [pmat] and [qmat],
     a previous tight bounds matrix [prev_bound_mat], pre-calculated row sums
