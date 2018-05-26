@@ -237,7 +237,7 @@ let recombine relation p q p_sum idxs =
         then M.set pbar 0 i (1. -. sum_rest) (* return--last iter put it over/under *)
         else (M.set pbar 0 i qi;             (* still <= 1, or >=1; try next one *)
               find_crossover idxs'' sum_rest_plus_qi) 
-    | [] -> raise (Failure "recombine: bad vectors") (* this should never happen *)
+    | [] -> raise (Failure "recombine: bad vectors") (* Should never happen: It means we didn't find a crossover point. *)
   in 
   find_crossover idxs p_sum;
   pbar
