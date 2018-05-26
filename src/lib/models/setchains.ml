@@ -243,7 +243,7 @@ let recombine relation p q p_sum idxs =
         then M.set pbar 0 i (1. -. sum_rest) (* return--last iter put it over/under *)
         else (M.set pbar 0 i qi;             (* still <= 1, or >=1; try next one *)
               find_crossover idxs'' sum_rest_plus_qi) 
-    | [] -> (bad_recombine_data := {p; q; p_sum; idxs; idxs'; psum}; (* Should never happen: It means we didn't find a crossover point. *)
+    | [] -> (bad_recombine_data := {p; q; p_sum; idxs; idxs'; psum; pbar}; (* Should never happen: It means we didn't find a crossover point. *)
              raise (Failure "recombine: Can't find crossover. Current data in Setchains.bad_recombine_data."))
   in 
   find_crossover idxs p_sum;
