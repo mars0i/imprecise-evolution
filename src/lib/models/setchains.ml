@@ -239,7 +239,7 @@ let recombine relation p q p_sum idxs =
         let qi = M.get q 0 i in
         let sum_rest = psum -. (M.get pbar 0 i) in (* pbar begins <= 1 if p<=q, or >= 1 if p, q swapped *)
         let sum_rest_plus_qi = (sum_rest +. qi) in
-	Printf.printf "sum_rest:%f plus_qi:%f\n" sum_rest sum_rest_plus_qi; (* DEBUG *)
+	Printf.printf "sum_rest:%.50f plus_qi:%.50f\n" sum_rest sum_rest_plus_qi; (* DEBUG *)
         if relation sum_rest_plus_qi 1.
         then M.set pbar 0 i (1. -. sum_rest) (* return--last iter put it over/under *)
         else (M.set pbar 0 i qi;             (* still <= 1, or >=1; try next one *)
@@ -266,7 +266,7 @@ let recombine relation p q p_sum idxs =
     SEE doc/nonoptimizedcode.ml for an older, perhaps clearer version.  *)
 let calc_bound_val recomb pmat qmat prev_bound_mat pmat_row_sums prev_mat_idx_lists width idx =
   let i, j = G.flat_idx_to_rowcol width idx in
-  Printf.printf "%d %d:\n " i j; (* DEBUG *)
+  Printf.printf "%d %d:\n" i j; (* DEBUG *)
   let p_row_sum = M.get pmat_row_sums i 0 in
   let idxs = A.get prev_mat_idx_lists j in
   let p_row, q_row = M.row pmat i, M.row qmat i in (* row doesn't copy; it just provides a view *)
@@ -294,7 +294,7 @@ let calc_bound_val_for_parmapi recomb pmat qmat prev_bound_mat pmat_row_sums pre
 let _hilo_mult ?(fork=true) recomb pmat qmat prev_bound_mat row_sums = 
   let (rows, cols) = M.shape pmat in
   let len = rows * cols in
-  let prev_mat_idx_lists = M.map_cols idx_sort_colvec prev_bound_mat in (* sorted list of indexes for each column *)
+  let prev_mat_idx_lists = M.map_cols idx_sort_colvec prev_bound_mat in (* sorted list of indexes for each column *) (* TODO are there redundant calcs here? *)
     if fork 
     then let bounds_array' = A.create_float len in
       M.of_array
