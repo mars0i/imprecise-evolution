@@ -415,17 +415,18 @@ let make_wf_interval popsize fitn_list =
     computing the set chain, using [parmap].  If [skip] is greater than 1, skip every
     [skip] generations when generating the setchain.  (This is not faster, but might be
     more convenient in some cases.)  *)
-let make_setchain_from_fitns ?(verbose=false) ?(fork=true) ?(skip=1) fitn_list =
+let make_setchain_from_fitns ?(verbose=false) ?(fork=true) ?(skip=1)
+                             popsize initfreq startgen lastgen fitn_list =
   if verbose then Printf.printf "making matrix interval ... %!";
-  let pmat, qmat = make_wf_interval popsize fitn_recs in
+  let pmat, qmat = make_wf_interval popsize fitn_list in
 
   if verbose then Printf.printf "making lazy bounds mats list ... %!";
   let bounds_mats =  lazy_bounds_mats_list ~fork pmat qmat in
 
   if verbose then Printf.printf "making lazy prob intervals list ... %!";
-  let tdistlists = TD.add_gens (lazy_prob_intervals_from_freq initfreq bounds_mats) in
-  let selected_gens = TD.lazy_ints ~skip:skip 1 in (* 1, i.e. don't display initial dist 0 massed on initfreq *)
-  let selected_tdistlists = TD.sublist startgen lastgen (TD.select_by_gens selected_gens tdistlists) in
+  let tdistlists = T.add_gens (lazy_prob_intervals_from_freq initfreq bounds_mats) in
+  let selected_gens = T.lazy_ints ~skip:skip 1 in (* 1, i.e. don't display initial dist 0 massed on initfreq *)
+  let selected_tdistlists = T.sublist startgen lastgen (T.select_by_gens selected_gens tdistlists) in
   selected_tdistlists
 
 

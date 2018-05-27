@@ -66,6 +66,6 @@ let commandline =
                 +> anon ("startgen" %: int)
                 +> anon ("lastgen" %: int)
                 +> anon (sequence ("fitn" %: float)))
-    Main.make_setchain_and_save_for_commandline
+    Main.commandline_make_setchain_and_save
 
 let () = Command.run ~version:"1.2" ~build_info:"setchainPDFS, (c) 2017, 2018 Marshall Abrams" commandline
