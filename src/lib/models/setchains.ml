@@ -16,6 +16,8 @@ module T = Tdists
     The basic distlist creation functions are in tdists.ml, but this module
     uses higher-level functions in Wrightfisher to create distlists. *)
 
+let recombine_tolerance = 1.0e-10
+
 (************************************************************)
 (** Utility helper functions, etc. *)
 
