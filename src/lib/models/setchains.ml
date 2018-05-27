@@ -216,11 +216,19 @@ let idx_sort_colvec v =
 
 let dummy_mat = M.create 1 1 0.
 
-(** Ref to an ntuple that can be filled with error-causng data from the 
-    internal state in recombine when there's a failure in in it. *)
+(** For debugging: ref to an ntuple that can be filled with error-causng data from the internal state in recombine when there's a failure in in it. *)
 type bad_recombine_data_type = {p : M.mat; q : M.mat; p_sum : float; idxs: int list; idxs' : int list; psum : float; pbar : M.mat}
 let bad_recombine_data = ref {p = dummy_mat; q = dummy_mat; p_sum = 0.; idxs = [0]; idxs' = [0]; psum = 0.; pbar = dummy_mat}
 (* This works because Owl matrices are not typed by their dimensions. *)
+
+(* TODO Comment this out normally! *)
+(** For debugging: ref to an ntuple that can be filled with error-causng data from the internal state in recombine when there's a failure in in it.
+    (Storing the relation, which is either (<=) or (>=) is useful because by applying it to two numbers you can find out which one it is and
+    therefore find out whether recombine was invoked indirectly from lo_mult or hi_mult.) *)
+(*
+type last_sums_etc_type = {psum : float; sum_rest : float; sum_rest_plus_qi : float; i : int; relation : float -> float -> bool}
+let last_sums_etc = ref {psum = 0.; sum_rest = 0.; sum_rest_plus_qi = 0.; i = 0; relation = (fun x y -> false)}
+*)
 
 (* This version of recombine uses a suggestion by Evik Tak: https://stackoverflow.com/a/46127060/1455243 *)
 (** This function is at the core of the hi-lo method.
@@ -239,7 +247,8 @@ let recombine relation p q p_sum idxs =
         let qi = M.get q 0 i in
         let sum_rest = psum -. (M.get pbar 0 i) in (* pbar begins <= 1 if p<=q, or >= 1 if p, q swapped *)
         let sum_rest_plus_qi = (sum_rest +. qi) in
-	Printf.printf "sum_rest:%.50f plus_qi:%.50f\n" sum_rest sum_rest_plus_qi; (* DEBUG *)
+	(* Printf.printf "sum_rest:%.50f plus_qi:%.50f\n" sum_rest sum_rest_plus_qi; *) (* DEBUG *)
+	(* last_sums_etc := {psum; sum_rest; sum_rest_plus_qi; i; relation}; *) (* DEBUG TODO comment out to prevent silent slow-down! *)
         if relation sum_rest_plus_qi 1.
         then M.set pbar 0 i (1. -. sum_rest) (* return--last iter put it over/under *)
         else (M.set pbar 0 i qi;             (* still <= 1, or >=1; try next one *)
@@ -266,7 +275,7 @@ let recombine relation p q p_sum idxs =
     SEE doc/nonoptimizedcode.ml for an older, perhaps clearer version.  *)
 let calc_bound_val recomb pmat qmat prev_bound_mat pmat_row_sums prev_mat_idx_lists width idx =
   let i, j = G.flat_idx_to_rowcol width idx in
-  Printf.printf "%d %d:\n" i j; (* DEBUG *)
+  (* Printf.printf "%d %d\n" i j; *) (* DEBUG *)
   let p_row_sum = M.get pmat_row_sums i 0 in
   let idxs = A.get prev_mat_idx_lists j in
   let p_row, q_row = M.row pmat i, M.row qmat i in (* row doesn't copy; it just provides a view *)
