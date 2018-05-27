@@ -6,7 +6,7 @@
 
 module Command = Core.Command
 module Spec = Core.Command.Spec
-module Main = Models.Main
+module Main = Models.App_fns
 
 (* TODO: 
  * Add option to control fill color.

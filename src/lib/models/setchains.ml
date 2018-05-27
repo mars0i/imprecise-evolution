@@ -224,9 +224,9 @@ let bad_recombine_data = ref {p = dummy_mat; q = dummy_mat; p_sum = 0.; idxs = [
 
 (* This version of recombine uses a suggestion by Evik Tak: https://stackoverflow.com/a/46127060/1455243 *)
 (** This function is at the core of the hi-lo method.
-    Given a relation (>=), a column l vec and two tight row vecs p and q s.t. 
-    p<=q, return a stochastic row vec ("p bar") with high values from q where l
-    is low and low values from p where l is high.  Or pass (<=), l, and tight
+    Given a relation [(>=)], a column vec [lo] and two tight row vecs [p] and [q] s.t. 
+    [p]<=[q], return a stochastic row vec [pbar] with high values from [q] where [lo]
+    is low and low values from [p] where [lo] is high.  Or pass (<=), l, and tight
     row vecs s.t. p >= q to return a stoch row vec ("q bar") with low values 
     from p where l is low.  Note that the latter swaps the normal meanings of 
     p and q in Hartfiel, i.e. here the arguments should be (<=), l, q, p
@@ -239,6 +239,7 @@ let recombine relation p q p_sum idxs =
         let qi = M.get q 0 i in
         let sum_rest = psum -. (M.get pbar 0 i) in (* pbar begins <= 1 if p<=q, or >= 1 if p, q swapped *)
         let sum_rest_plus_qi = (sum_rest +. qi) in
+	Printf.printf "sum_rest:%f plus_qi:%f\n" sum_rest sum_rest_plus_qi; (* DEBUG *)
         if relation sum_rest_plus_qi 1.
         then M.set pbar 0 i (1. -. sum_rest) (* return--last iter put it over/under *)
         else (M.set pbar 0 i qi;             (* still <= 1, or >=1; try next one *)
@@ -265,6 +266,7 @@ let recombine relation p q p_sum idxs =
     SEE doc/nonoptimizedcode.ml for an older, perhaps clearer version.  *)
 let calc_bound_val recomb pmat qmat prev_bound_mat pmat_row_sums prev_mat_idx_lists width idx =
   let i, j = G.flat_idx_to_rowcol width idx in
+  Printf.printf "%d %d:\n " i j; (* DEBUG *)
   let p_row_sum = M.get pmat_row_sums i 0 in
   let idxs = A.get prev_mat_idx_lists j in
   let p_row, q_row = M.row pmat i, M.row qmat i in (* row doesn't copy; it just provides a view *)
@@ -410,11 +412,17 @@ let make_wf_interval popsize fitn_list =
   then Printf.eprintf "\n[make_wf_interval] Note: had to tighten original Wright-Fisher-based interval.\n";
   tight_low, tight_high
 
-(** Make a setchain from a list of fitness records.  If [verbose] then print informational
-    messages about progress to stdout.  If [fork], do fork multiple processes for
-    computing the set chain, using [parmap].  If [skip] is greater than 1, skip every
-    [skip] generations when generating the setchain.  (This is not faster, but might be
-    more convenient in some cases.)  *)
+(** [make_setchain_from_fitns popsize initfreq startgen lastgen fitn_list]
+    makes a setchain in the form of a lazy list of [tdists] elements, with
+    population size [popsize] and initial frequency [initfreq] from generation
+    [startgen] to [lastgen], inclusing, constructing the upper and lower
+    transition matrices from a list of fitness records [fitn_list].
+    If [verbose] then print informational messages about progress to stdout.
+    If [fork], do fork multiple processes for computing the set chain, using
+    [parmap].  If [skip] is greater than 1, skip every [skip] generations when
+    generating the setchain.  (Setting [skip] > 1 will not reduce compuation or
+    improve speed, but it but might be more convenient in some cases and means
+    that there is less work for functions that use the resulting data.)  *)
 let make_setchain_from_fitns ?(verbose=false) ?(fork=true) ?(skip=1)
                              popsize initfreq startgen lastgen fitn_list =
   if verbose then Printf.printf "making matrix interval ... %!";
@@ -428,57 +436,3 @@ let make_setchain_from_fitns ?(verbose=false) ?(fork=true) ?(skip=1)
   let selected_gens = T.lazy_ints ~skip:skip 1 in (* 1, i.e. don't display initial dist 0 massed on initfreq *)
   let selected_tdistlists = T.sublist startgen lastgen (T.select_by_gens selected_gens tdistlists) in
   selected_tdistlists
-
-
-(*
-module T = Tdists
-
-let lazy_tdists_from_freq ?(first_tick=0) freq bounds_mats_list =
-  let f dists tdists_list = 
-    let prev_gen = T.((T.hd tdists_list).gen) in
-    T.{gen = prev_gen + 1; dists}
-  in
-  let lazy_intervals = lazy_prob_intervals_from_freq freq bounds_mats_list in
-  let first_interval = T.hd lazy_intervals in
-  let rest_intervals = T.tl lazy_intervals in
-  T.lazy_fold_right f rest_intervals {t = 0; dists = first_interval}
-*)
-
-(*
-regular list illustration:
-
-type x = {a:int; b:int};;
-
-fold_right (fun x ys -> let {a; b} = hd ys in {a=(a+1); b=x}::ys) z [{a=0;b=0}];;
-- : x list =
-[{a = 12; b = 0}; {a = 11; b = 1}; {a = 10; b = 2}; {a = 9; b = 3}; {a = 8; b = 4};
- {a = 7; b = 5}; {a = 6; b = 6}; {a = 5; b = 7}; {a = 4; b = 8}; {a = 3; b = 9};
- {a = 2; b = 10}; {a = 1; b = 11}; {a = 0; b = 0}]
-
-*)
-
-
-(** USAGE EXAMPLES: 
-     module S = Models.Setchains;;
-     module T = Models.Tdists
-     module W = Models.Wrightfisher;;
-     let pmat, qmat = W.(S.make_wf_interval 100 [{w11=1.0; w12=0.5; w22=0.3}; {w11=0.2; w12=0.9; w22=1.0}]);;
-     let bounds_mats = S.lazy_bounds_mats_list pmat qmat;;
-     let distslist = S.lazy_prob_intervals_from_freq 50 bounds_mats;;
-     let tdistslist = T.add_gens distslist;;
-   or:
-     let tdistslist = 
-       T.add_gens (S.lazy_prob_intervals_from_freq 50
-                   (S.lazy_bounds_mats_list_from_pair
-                       W.(S.make_wf_interval 100 [{w11=1.0; w12=0.5; w22=0.3};
-                                                  {w11=0.2; w12=0.9; w22=1.0}])));;
-     (* however at present you need the one without ts, too *)
-
-   Then to pass a sublist e.g. to make_setchain_bounds_pdfs use
-     T.sublist 1 4 tdistlists
-   or
-     T.sublist 1 4 tdistlists
-   e.g. like this:
-     I.make_setchain_bounds_pdfs ~rows:2 ~cols:2 "yo" (T.sublist 1 4 tdistlists);;
-
-*)
