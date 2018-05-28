@@ -434,7 +434,7 @@ let make_wf_interval popsize fitn_list =
 (** [make_setchain_from_fitns popsize initfreq startgen lastgen fitn_list]
     makes a setchain in the form of a lazy list of [tdists] elements, with
     population size [popsize] and initial frequency [initfreq] from generation
-    [startgen] to [lastgen], inclusing, constructing the upper and lower
+    [startgen] to [lastgen], inclusive, constructing the upper and lower
     transition matrices from a list of fitness records [fitn_list].
     If [verbose] then print informational messages about progress to stdout.
     If [fork], do fork multiple processes for computing the set chain, using
