@@ -1,5 +1,6 @@
-(** Functions inspired by Hartfiel's _Markov Set-Chains_, Springer 1998.
-    Please see this book for definitions of terms, proofs, algorithms. *)
+(** {b Functions inspired by Hartfiel's {e Markov Set-Chains}, Springer, 1998.
+    Please see chapter 2 of that book for definitions of terms, proofs, 
+    algorithms.} *)
 
 module L = Batteries.List
 module A = Batteries.Array
@@ -10,17 +11,11 @@ module G = Utils.Genl
 module WF = Wrightfisher
 module T = Tdists
 
-(** One goal here is to create a "distlist", which is a LazyList of Lists 
-    Owl row vector matrices representing probability distributions over 
-    possible frequencies of alleles (or other organism types0 in a population. 
-    The basic distlist creation functions are in tdists.ml, but this module
-    uses higher-level functions in Wrightfisher to create distlists. *)
-
 let a_little_more_than_one = 1. +. 1.0e-10
 let a_little_less_than_one = 1. -. 1.0e-10
 
 (************************************************************)
-(** Utility helper functions, etc. *)
+(** {b Utility helper functions, etc.:} *)
 
 let always _ = true
 
@@ -53,7 +48,7 @@ let sanity_check_vec_interval p q =
   () (* redundant clarification *)
 
 (************************************************************)
-(** Tight Interval Algorithm from p. 31: *)
+(** {b Tight Interval Algorithm from p. 31:} *)
 
 (** Return a tightened version of the value at index idx in this_vec
     given other_vec.  *)
@@ -108,7 +103,7 @@ let tighten_mat_interval low high =
 
   
 (************************************************************)
-(** Determine vertices: *)
+(** {b Determine vertices:} *)
 
 (** Try to avoid inequality comparisons that are incorrect due to
     inherent floating point fudgeyness.  Used in vertices_at. *)
@@ -166,7 +161,7 @@ let mat_vertices ?digits ?uniq p q =
 
 
 (************************************************************)
-(** Hi-Lo Method.  See Hartfiel section 2.4, pp.  46-54
+(** {b Hi-Lo Method (See Hartfiel, section 2.4, pp. 46-54):}
 
 This is an analog of matrix multiplication for intervals of stochastic
 matrices.  The method calculates tight bounds for products of all
@@ -206,29 +201,24 @@ let idx_sort_colvec v =
   let idxs = L.range 0 `To (size - 1) in
   L.fast_sort (col_vec_idx_cmp v) idxs
 
-(** "Recombination" functions (by analogy with genetic recombination) that
-    take two vectors and create a new vector from parts of each of them,
-    though in this case the order in which the elements are considered is
-    not the linear order within vectors. 
-    (Don't forget to tighten the arguments first.) 
-    NOTE: Functions like this one that take a function argument such as 
-    [relation] or [recomb] are mainly intended to be used for building 
-    other functions.  Among other things, the functionals will usually 
-    require arguments in a different order depending on which function 
-    is passed.  *)
+(** {b "Recombination" functions (by analogy with genetic recombination) that
+    take two (pre-tightened) vectors and create a new vector from parts of each
+    of them, though in this case the order in which the elements are considered is
+    not the linear order within vectors.} *)
 
 let dummy_mat = M.create 1 1 0.
 
-(** For debugging: ref to an ntuple that can be filled with error-causng data from the internal state in recombine when there's a failure in in it. *)
 type bad_recombine_data_type = {p : M.mat; q : M.mat; p_sum : float; idxs: int list; idxs' : int list; psum : float; pbar : M.mat}
+
+(** For debugging: ref to an ntuple that can be filled with error-causng data from the internal state in recombine when there's a failure in in it. *)
 let bad_recombine_data = ref {p = dummy_mat; q = dummy_mat; p_sum = 0.; idxs = [0]; idxs' = [0]; psum = 0.; pbar = dummy_mat}
 (* This works because Owl matrices are not typed by their dimensions. *)
 
+(*
 (* TODO Comment this out normally! *)
 (** For debugging: ref to an ntuple that can be filled with error-causng data from the internal state in recombine when there's a failure in in it.
     (Storing the relation, which is either (<=) or (>=) is useful because by applying it to two numbers you can find out which one it is and
     therefore find out whether recombine was invoked indirectly from lo_mult or hi_mult.) *)
-(*
 type last_sums_etc_type = {psum : float; sum_rest : float; sum_rest_plus_qi : float; i : int; relation : float -> float -> bool}
 let last_sums_etc = ref {psum = 0.; sum_rest = 0.; sum_rest_plus_qi = 0.; i = 0; relation = (fun x y -> false)}
 *)
@@ -348,7 +338,7 @@ let _hi_mult ?(fork=true) ?(near_one=a_little_more_than_one) pmat qmat prev_hi_m
     otherwise somehow corrupted element in the LazyList.  Since a LazyList
     won't recalculate an element once it's been created the first time,
     your lazy list may become useless, and you'll have to regenerate it
-    from scratch.  (That's my interpretation of something that happened once.) *)
+    from scratch. *)
 
 (** Return pair of pairs: The first pair is the bounds matrices that were
     passed as the third argument [(lo,hi)], unchanged, and the next bounds
@@ -395,8 +385,7 @@ let lazy_prob_intervals_from_freq freq bounds_mats_list =
   T.cons [init_dist; init_dist] (T.map (freq_mult freq) bounds_mats_list)
 
 
-(*****************************************************)
-(** Functions for making matrix intervals *)
+(** {b Functions for making matrix intervals:} *)
 
 (** The next two functions make a matrix interval that will be big enough
     (but no bigger) to contain the probability distributions defined by applying a
@@ -431,17 +420,24 @@ let make_wf_interval popsize fitn_list =
   then Printf.eprintf "\n[make_wf_interval] Note: had to tighten original Wright-Fisher-based interval.\n";
   tight_low, tight_high
 
+(** {b High-level convenience functions for making set-chains:} *)
+
 (** [make_setchain_from_fitns popsize initfreq startgen lastgen fitn_list]
     makes a setchain in the form of a lazy list of [tdists] elements, with
     population size [popsize] and initial frequency [initfreq] from generation
     [startgen] to [lastgen], inclusive, constructing the upper and lower
     transition matrices from a list of fitness records [fitn_list].
-    If [verbose] then print informational messages about progress to stdout.
-    If [fork], do fork multiple processes for computing the set chain, using
-    [parmap].  If [skip] is greater than 1, skip every [skip] generations when
+
+    If [verbose], print informational messages about progress to stdout.
+
+    If [fork] is [false], don't fork multiple processes using [parmap]
+    when computing the set-chain elements.
+
+    If [skip] is greater than 1, skip every [skip] generations when
     generating the setchain.  (Setting [skip] > 1 will not reduce computation
-    or improve speed, but it but might be more convenient in some cases and it 
-    means that there is less work for functions that use the resulting data.) *)
+    or improve speed in generating the set-chain, but it but might be more 
+    convenient to have data that skips generations, and it means that there
+    will be less work for functions that use the resulting data.) *)
 let make_setchain_from_fitns ?(verbose=false) ?(fork=true) ?(skip=1)
                              popsize initfreq startgen lastgen fitn_list =
   if verbose then Printf.printf "making matrix interval ... %!";
