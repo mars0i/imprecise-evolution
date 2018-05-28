@@ -8,14 +8,14 @@ type genstate = {time : int ; state : Mat.mat list}
 
 type genstate_seq = genstate LL.t
 
-(** tdists functions *) 
+(** genstate functions *) 
 
 (** accessor, constructor functions: *)
 let time gs = gs.time
 let state gs = gs.state
 let make time state = {time ; state}
 
-(** tdistslist functions *) 
+(** genstate_seq functions *) 
 
 let hd = LL.hd
 let tl = LL.tl
