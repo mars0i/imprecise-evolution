@@ -9,7 +9,7 @@ module Pmap = Parmap
 
 module G = Utils.Genl
 module WF = Wrightfisher
-module T = Tdists
+module T = Genstate
 
 let a_little_more_than_one = 1. +. 1.0e-10
 let a_little_less_than_one = 1. -. 1.0e-10

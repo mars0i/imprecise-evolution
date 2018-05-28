@@ -7,7 +7,7 @@
 module S = Setchains
 module W = Wrightfisher
 module IO = CredalsetIO
-module T = Tdists
+module T = Genstate
 module Pl = Owl.Plot
 
 let bottom_top_colors=Pl.[RGB (0,0,200); RGB (200,0,0)]

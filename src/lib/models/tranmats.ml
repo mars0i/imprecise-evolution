@@ -5,7 +5,7 @@
 
 module Mat = Owl.Mat
 module L = Batteries.List
-module T = Tdists
+module T = Genstate
 
 (** The general goal here is to create a "distlist", which is a 
     LazyList of Lists Owl row vector matrices representing probability

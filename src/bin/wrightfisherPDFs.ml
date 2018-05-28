@@ -10,7 +10,7 @@ module Spec = Core.Command.Spec
 module Pl = Owl.Plot
 module WF = Models.Wrightfisher
 module IO = Models.CredalsetIO
-module T = Models.Tdists
+module T = Models.Genstate
 
 let sprintf = Printf.sprintf
 

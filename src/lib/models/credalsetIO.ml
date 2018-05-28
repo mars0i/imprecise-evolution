@@ -6,7 +6,7 @@ module OU = Owl.Utils
 module L = Batteries.List
 module A = Batteries.Array
 module G = Utils.Genl
-module T = Tdists
+module T = Genstate
 
 let (%) f g = (fun x -> f (g x))
 
