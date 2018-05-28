@@ -439,9 +439,9 @@ let make_wf_interval popsize fitn_list =
     If [verbose] then print informational messages about progress to stdout.
     If [fork], do fork multiple processes for computing the set chain, using
     [parmap].  If [skip] is greater than 1, skip every [skip] generations when
-    generating the setchain.  (Setting [skip] > 1 will not reduce compuation or
-    improve speed, but it but might be more convenient in some cases and means
-    that there is less work for functions that use the resulting data.)  *)
+    generating the setchain.  (Setting [skip] > 1 will not reduce computation
+    or improve speed, but it but might be more convenient in some cases and it 
+    means that there is less work for functions that use the resulting data.) *)
 let make_setchain_from_fitns ?(verbose=false) ?(fork=true) ?(skip=1)
                              popsize initfreq startgen lastgen fitn_list =
   if verbose then Printf.printf "making matrix interval ... %!";
