@@ -16,7 +16,8 @@ module T = Tdists
     The basic distlist creation functions are in tdists.ml, but this module
     uses higher-level functions in Wrightfisher to create distlists. *)
 
-let recombine_tolerance = 1.0e-10
+let a_little_more_than_one = 1. +. 1.0e-10
+let a_little_less_than_one = 1. -. 1.0e-10
 
 (************************************************************)
 (** Utility helper functions, etc. *)
@@ -233,15 +234,22 @@ let last_sums_etc = ref {psum = 0.; sum_rest = 0.; sum_rest_plus_qi = 0.; i = 0;
 *)
 
 (* This version of recombine uses a suggestion by Evik Tak: https://stackoverflow.com/a/46127060/1455243 *)
-(** This function is at the core of the hi-lo method.
-    Given a relation [(>=)], a column vec [lo] and two tight row vecs [p] and [q] s.t. 
-    [p]<=[q], return a stochastic row vec [pbar] with high values from [q] where [lo]
-    is low and low values from [p] where [lo] is high.  Or pass (<=), l, and tight
-    row vecs s.t. p >= q to return a stoch row vec ("q bar") with low values 
-    from p where l is low.  Note that the latter swaps the normal meanings of 
-    p and q in Hartfiel, i.e. here the arguments should be (<=), l, q, p
-    according to the normal senses of p and q. *)
-let recombine relation p q p_sum idxs =
+(** [recombine past_one p q p_sum idxs] is at the core of the hi-lo method.
+    It is used to return a stochastic row vec [pbar] with high values from [q]
+    where [lo] is low and low values from [p] where [lo] is high, or similarly
+    for [q], [p], and [hi].  Which calculation is performed depends on whether
+    the [p]<=[q] and [past_one] tests whether its argument is greater than a 
+    number just less than one, or instead [p]>=[q] and [past_one] tests whether
+    its argument is less than a number just greater than one.  (These tests are
+    just >= and <= tests with tolerance for float rounding effects that creates
+    a number on the wrong side of 1 when it should be equal to 1.  Note that the 
+    latter swaps the normal meanings of p and q in Hartfiel.  [p_sum] contains a
+    the sum of a row in [p].  (It's passed separately so that it doesn't have to be
+    recalculated every time this function is called.)  [idxs] contains a sequence
+    of indexes representing numerical order of indexes in a column vector from [p].
+    The return value is vector 's called [p-bar] (or [q-bar]) in Hartfiel.
+    *)
+let recombine past_one p q p_sum idxs =
   let pbar = M.copy p in  (* p was created using M.row, so it's a view not a copy. *)
   let rec find_crossover idxs' psum =
     match idxs' with
@@ -251,7 +259,7 @@ let recombine relation p q p_sum idxs =
         let sum_rest_plus_qi = (sum_rest +. qi) in
 	(* Printf.printf "sum_rest:%.50f plus_qi:%.50f\n" sum_rest sum_rest_plus_qi; *) (* DEBUG *)
 	(* last_sums_etc := {psum; sum_rest; sum_rest_plus_qi; i; relation}; *) (* DEBUG TODO comment out to prevent silent slow-down! *)
-        if relation sum_rest_plus_qi 1.
+        if past_one sum_rest_plus_qi
         then M.set pbar 0 i (1. -. sum_rest) (* return--last iter put it over/under *)
         else (M.set pbar 0 i qi;             (* still <= 1, or >=1; try next one *)
               find_crossover idxs'' sum_rest_plus_qi) 
@@ -321,8 +329,8 @@ let _hilo_mult ?(fork=true) recomb pmat qmat prev_bound_mat row_sums =
     make the next lo matrix.
     If [~fork] is present with any value, won't use Parmap to divide the 
     work between processes. *)
-let _lo_mult ?(fork=true) pmat qmat prev_lo_mat p_row_sums =
-  _hilo_mult ~fork (recombine (>=)) pmat qmat prev_lo_mat p_row_sums
+let _lo_mult ?(fork=true) ?(near_one=a_little_less_than_one) pmat qmat prev_lo_mat p_row_sums =
+  _hilo_mult ~fork (recombine ((<) near_one)) pmat qmat prev_lo_mat p_row_sums
 
 (** Starting from the original [pmat] and [qmat] tight interval bounds, the 
     previous component tight hi bound, and a vector of q row sums [q_row_sums],
@@ -330,8 +338,8 @@ let _lo_mult ?(fork=true) pmat qmat prev_lo_mat p_row_sums =
     NOTE args are in same order as lo_mult.
     If [~fork] is present with any value, won't use Parmap to divide the 
     work between processes. *)
-let _hi_mult ?(fork=true) pmat qmat prev_hi_mat q_row_sums =
-  _hilo_mult ~fork (recombine (<=)) qmat pmat prev_hi_mat q_row_sums (* NOTE SWAPPED ARGS *)
+let _hi_mult ?(fork=true) ?(near_one=a_little_more_than_one) pmat qmat prev_hi_mat q_row_sums =
+  _hilo_mult ~fork (recombine ((>) near_one)) qmat pmat prev_hi_mat q_row_sums (* NOTE SWAPPED ARGS *)
 
 (** Tip: The next few functions create a LazyList in which each element is
     constructed from the preceding one by a method that usually forks 
