@@ -6,7 +6,7 @@
 
 module Command = Core.Command
 module Spec = Core.Command.Spec
-module Main = Models.App_fns
+module A = Models.App_fns
 
 (* TODO: 
  * Add option to control fill color.
@@ -66,6 +66,6 @@ let commandline =
                 +> anon ("startgen" %: int)
                 +> anon ("lastgen" %: int)
                 +> anon (sequence ("fitn" %: float)))
-    Main.commandline_make_setchain_and_save
+    A.commandline_make_setchain_and_save
 
 let () = Command.run ~version:"1.2" ~build_info:"setchainPDFS, (c) 2017, 2018 Marshall Abrams" commandline
