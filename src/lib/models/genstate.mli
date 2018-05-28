@@ -5,16 +5,16 @@ module LL = Batteries.LazyList
 (** Function that always returns [true] given any argument. *)
 val always : 'a -> bool
 
-type tdists = { gen : int; dists : Mat.mat list; }
-type tdistslist = tdists LL.t
+type genstate = {time : int; state : Mat.mat list; }
+type genstate_seq = genstate LL.t
 
-(** tdists functions *) 
+(** genstate functions *) 
 
 (** accessor, constructor functions: *)
 
-val gen : tdists -> int
-val dists : tdists -> Mat.mat list
-val make : int -> Mat.mat list -> tdists
+val time : genstate -> int
+val state : genstate -> Mat.mat list
+val make : int -> Mat.mat list -> genstate
 
 (** tdistslist functions *) 
 
@@ -156,25 +156,25 @@ val pri_f_field_uppers : int -> Mat.mat -> Mat.mat -> (int list * float) list
 (** [ints_from n] generates a lazy list of integers starting from [n]. *)
 val ints_from : int -> int LL.t
 
-(** [add_gens dists_llist] makes a lazy list of [tdists] from a lazy list
+(** [add_times genstate_seq] makes a lazy list of [genstate] from a lazy list
    of lists of state matrices, adding generation numbers in the [gen]
    field.  If [~first_tick] is given, start with that generation number;
    otherwise begin with generation 0. *)
-val add_gens : ?first_tick:int -> Mat.mat list LL.t -> tdists LL.t
+val add_times : ?first_tick:int -> Mat.mat list LL.t -> genstate LL.t
 
-(** Reverse operation of [add_gens]: Given a lazy list of [tdists],
+(** Reverse operation of [add_times]: Given a lazy list of [genstate],
     returns a lazy list of lists of state vectors. *)
-val remove_gens : tdists LL.t -> Mat.mat list LL.t
+val remove_times : genstate LL.t -> Mat.mat list LL.t
 
-(** [sublist start_t finish_t tdists_llist] returns a lazy list that's
-    a finite sublist of [tdists_llist], from the first element with 
-    [gen] >= [start_gen] to the last element with [gen] <= [finish_gen].  
+(** [sublist start_t finish_t genstate_seq] returns a lazy list that's
+    a finite sublist of [genstate_seq], from the first element with 
+    [gen] >= [start_time] to the last element with [gen] <= [finish_time].  
     Note that if the list is infinite and there are no elements satisfying
     both of these conditions, the function will try to run forever. *)
-val sublist : int -> int -> tdists LL.t -> tdists LL.t
+val sublist : int -> int -> genstate LL.t -> genstate LL.t
 
-(** In [select_by_gens generations tdists_llist], [generations] is a lazy
-    list of integers in increasing order, and [tdists_llist] is a lazy
-    list of tdists.  The function returns a lazy list contanining those 
-    tdists whose generation numbers match the integers in [generations]. *)
-val select_by_gens : int LL.t -> tdists LL.t -> tdists LL.t
+(** In [select_by_times generations genstate_seq], [generations] is a lazy
+    list of integers in increasing order, and [genstate_seq] is a lazy
+    list of genstate.  The function returns a lazy list contanining those 
+    genstate whose generation numbers match the integers in [generations]. *)
+val select_by_times : int LL.t -> genstate LL.t -> genstate LL.t

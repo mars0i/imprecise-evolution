@@ -19,9 +19,9 @@ let tdists_marshal_ext = "mltds"
 let tdists_list_to_idx_cols finite_tdists_list =
   let open T in
   let cols_for_one_tdists td =
-    let len = L.length td.dists in
-    Mat.concat_horizontal (Mat.create len 1 (float td.gen))
-                          (Mat.of_array (A.of_list td.dists) len 1)
+    let len = L.length td.state in
+    Mat.concat_horizontal (Mat.create len 1 (float td.time))
+                          (Mat.of_array (A.of_list td.state) len 1)
   in
   let llist_of_mats = T.map cols_for_one_tdists finite_tdists_list in
   (* concat 'em here *)
@@ -32,8 +32,8 @@ let tdists_list_to_idx_cols finite_tdists_list =
 (*
 let write_csv_tdists_list basename finite_tdists_list =
   let open T in
-  let first_gen = (T.hd finite_tdists_list).gen in
-  let last_gen = (T.last finite_tdists_list).gen in
+  let first_gen = (T.hd finite_tdists_list).time in
+  let last_gen = (T.last finite_tdists_list).time in
   let filename = Printf.sprintf "%s%02dto%02d.%s" basename first_gen last_gen "csv" in
   (* make header row *)
   (* construct data rows *)
@@ -46,8 +46,8 @@ let write_csv_tdists_list basename finite_tdists_list =
     Lazy list [finite_tdists_list] must be finite! *)
 let marshal_tdists_list basename finite_tdists_list =
   let open T in
-  let first_gen = (T.hd finite_tdists_list).gen in
-  let last_gen = (T.last finite_tdists_list).gen in
+  let first_gen = (T.hd finite_tdists_list).time in
+  let last_gen = (T.last finite_tdists_list).time in
   let filename = Printf.sprintf "%s%02dto%02d.%s" 
                                  basename first_gen last_gen tdists_marshal_ext in
   OU.marshal_to_file finite_tdists_list filename
@@ -58,7 +58,7 @@ let marshal_tdists_sublist basename start_gen last_gen tdists_list =
                            (T.sub_lazy_list start_gen last_gen tdists_list)
 
 let unmarshal_tdists_list filename =
-  ((OU.marshal_from_file filename) : T.tdistslist)
+  ((OU.marshal_from_file filename) : T.genstate_seq)
 
 (** PDF plot-writing functions *)
 
@@ -201,7 +201,7 @@ let make_pdfs ?(leftright=true) ?(pdfdim=ThreeD) ?(rows=1) ?(cols=1)
   let make_pdf group_idx page_group = 
     (* Construct filename from basename and generation numbers: *)
     let group_len = A.length page_group in  (* differs if last group is short *)
-    let generations_string = String.concat "_" (L.map (string_of_int % T.gen) (A.to_list page_group)) in
+    let generations_string = String.concat "_" (L.map (string_of_int % T.time) (A.to_list page_group)) in
     let filename = Printf.sprintf "%s%s.pdf" basename generations_string in
     let first_of_two = ref true in (* allows staying with one generation for BothDs *)
     let h = Pl.create ~m:rows ~n:cols filename in
@@ -215,8 +215,8 @@ let make_pdfs ?(leftright=true) ?(pdfdim=ThreeD) ?(rows=1) ?(cols=1)
         let idx = (i * (max_j + 1)) + j in 
         if idx < group_len then  (* don't index past end of a short group *)
           (Pl.set_foreground_color h 0 0 0; (* grid and plot title color *)
-           let T.{gen; dists}  = page_group.(idx) in
-           let xs, ys, zs = make_coords sample_interval (simple_sort_dists dists) in
+           let T.{time; state}  = page_group.(idx) in
+           let xs, ys, zs = make_coords sample_interval (simple_sort_dists state) in
            (* pre_title: either a newline (for 3D) plots or an empty string, so that
             *  titles on 3D plots will be pushed down a bit.*)
            let pre_title = match pdfdim, !first_of_two with
@@ -230,7 +230,7 @@ let make_pdfs ?(leftright=true) ?(pdfdim=ThreeD) ?(rows=1) ?(cols=1)
                                                ""
                            | ThreeD, _     -> add_3D_plot ?plot_max ?fontsize ?colors ?addl_3D_fn h altitude azimuth xs ys zs;
                                               "\n"
-           in Pl.set_title h (pre_title ^ (Printf.sprintf "Generation %d" gen))
+           in Pl.set_title h (pre_title ^ (Printf.sprintf "Generation %d" time))
           )
         else (* short group *)
           (* Dummy plot to prevent plplot from leaving a spurious border: *)

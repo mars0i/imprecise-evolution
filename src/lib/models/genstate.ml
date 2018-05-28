@@ -4,16 +4,16 @@ module LL = Batteries.LazyList
 
 let always _ = true
 
-type tdists = {gen : int ; dists : Mat.mat list}
+type genstate = {time : int ; state : Mat.mat list}
 
-type tdistslist = tdists LL.t
+type genstate_seq = genstate LL.t
 
 (** tdists functions *) 
 
 (** accessor, constructor functions: *)
-let gen tds = tds.gen
-let dists tds = tds.dists
-let make gen dists = {gen ; dists}
+let time gs = gs.time
+let state gs = gs.state
+let make time state = {time ; state}
 
 (** tdistslist functions *) 
 
@@ -157,15 +157,15 @@ let pri_f_field_uppers omega_max atom_mins atom_maxs =
 
 let ints_from n = iterate n ((+) 1) 
 
-let add_gens ?(first_tick=0) dists_llist =
-  map2 make (ints_from first_tick) dists_llist
+let add_times ?(first_tick=0) genstate_seq =
+  map2 make (ints_from first_tick) genstate_seq
 
-let remove_gens tdists_llist = map dists tdists_llist
+let remove_times genstate_seq = map state genstate_seq
 
-let sublist start_gen finish_gen tdists_llist =
-  take_while (fun tds -> tds.gen <= finish_gen)
-                (drop_while (fun tds -> tds.gen < start_gen)
-		               tdists_llist)
+let sublist start_time finish_time genstate_seq =
+  take_while (fun gs -> gs.time <= finish_time)
+                (drop_while (fun gs -> gs.time < start_time)
+		               genstate_seq)
 
-let select_by_gens generations tdists_llist =
-  lazy_select gen generations tdists_llist
+let select_by_times generations genstate_seq =
+  lazy_select time generations genstate_seq

@@ -182,7 +182,7 @@ let fitns = W.([{w11=1.0; w12=0.5; w22=0.2}; {w11=1.0; w12=0.8; w22=0.1}]);;
 let pmat, qmat = S.make_wf_interval 100 fitns;;
 let bounds_mats =  S.lazy_bounds_mats_list pmat qmat;;
 let intervals = S.lazy_prob_intervals_from_freq 50 bounds_mats;;
-let tdistlists = T.add_gens intervals;;
+let tdistlists = T.add_times intervals;;
 I.make_setchain_bounds_pdfs ~rows:2 ~cols:3 "foo"
                             (T.sublist 1 12 tdistlists);;
 ]}
@@ -447,7 +447,7 @@ let make_setchain_from_fitns ?(verbose=false) ?(fork=true) ?(skip=1)
   let bounds_mats =  lazy_bounds_mats_list ~fork pmat qmat in
 
   if verbose then Printf.printf "making tdists list ... %!";
-  let tdistlists = T.add_gens (lazy_prob_intervals_from_freq initfreq bounds_mats) in
-  let selected_gens = T.lazy_ints ~skip:skip 1 in (* 1, i.e. don't display initial dist 0 massed on initfreq *)
-  let selected_tdistlists = T.sublist startgen lastgen (T.select_by_gens selected_gens tdistlists) in
+  let tdistlists = T.add_times (lazy_prob_intervals_from_freq initfreq bounds_mats) in
+  let selected_times = T.lazy_ints ~skip:skip 1 in (* 1, i.e. don't display initial dist 0 massed on initfreq *)
+  let selected_tdistlists = T.sublist startgen lastgen (T.select_by_times selected_times tdistlists) in
   selected_tdistlists
