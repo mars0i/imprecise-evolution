@@ -23,7 +23,7 @@ val tl : 'a LL.t -> 'a LL.t
 val last : 'a LL.t -> 'a
 val next : 'a LL.t -> 'a LL.node_t
 val is_empty : 'a LL.t -> bool
-val at : 'a LL.t -> int -> 'a
+val nth : 'a LL.t -> int -> 'a
 val cons : 'a -> 'a LL.t -> 'a LL.t
 val fold_left : ('a -> 'b -> 'a) -> 'a -> 'b LL.t -> 'a
 val fold_right : ('a -> 'b Lazy.t -> 'b) -> 'a LL.t -> 'b Lazy.t -> 'b Lazy.t

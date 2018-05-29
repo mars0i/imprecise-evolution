@@ -22,7 +22,7 @@ let tl = LL.tl
 let last = LL.last
 let next = LL.next
 let is_empty = LL.is_empty
-let at = LL.at
+let nth = LL.nth
 let cons = LL.cons
 let fold_left = LL.fold_left
 let fold_right = LL.lazy_fold_right
@@ -133,27 +133,27 @@ let invert_prob_sum omega_max atom_extrema subset_idxs =
 
 let algebra_probs probs = 
   let i = (snd (Mat.shape probs)) - 1 in
-  let idx_sets = at algebra_sets i in
+  let idx_sets = nth algebra_sets i in
   let make_entry event = (event, prob_sum probs event) in
   L.map make_entry idx_sets 
 
 let simple_sums omega_max atom_extrema =
-  L.map (prob_sum atom_extrema) (at algebra_sets omega_max)
+  L.map (prob_sum atom_extrema) (nth algebra_sets omega_max)
 
 let inverted_sums omega_max atom_extrema =
-  L.map (invert_prob_sum omega_max atom_extrema) (at algebra_sets omega_max)
+  L.map (invert_prob_sum omega_max atom_extrema) (nth algebra_sets omega_max)
 
 let pri_f_field_lowers omega_max atom_mins atom_maxs =
   let mins = simple_sums omega_max atom_mins in
   let inverted_maxs = inverted_sums omega_max atom_maxs in
   let minmins = L.map2 max mins inverted_maxs in
-  L.combine (at algebra_sets omega_max) minmins
+  L.combine (nth algebra_sets omega_max) minmins
 
 let pri_f_field_uppers omega_max atom_mins atom_maxs =
   let maxs = simple_sums omega_max atom_maxs in
   let inverted_mins = inverted_sums omega_max atom_mins in
   let maxmaxs = L.map2 min maxs inverted_mins in
-  L.combine (at algebra_sets omega_max) maxmaxs
+  L.combine (nth algebra_sets omega_max) maxmaxs
 
 let ints_from n = iterate n ((+) 1) 
 
