@@ -1,12 +1,13 @@
 module Mat = Owl.Mat
 module L = Batteries.List
 module LL = Batteries.LazyList
+module Seq = Core.Sequence
 
 let always _ = true
 
 type genstate = {time : int ; state : Mat.mat list}
 
-type genstate_seq = genstate LL.t
+type genstate_seq = genstate Seq.t
 
 (** genstate functions *) 
 
@@ -17,13 +18,13 @@ let make time state = {time ; state}
 
 (** genstate_seq functions *) 
 
-let hd = LL.hd
-let tl = LL.tl
+let hd = Seq.hd
+let tl = Seq.tl
 let last = LL.last
 let next = LL.next
 let is_empty = LL.is_empty
-let at = LL.at
-let cons = LL.cons
+(* let nth = Seq.nth *)
+(* let cons = LL.cons *)
 let fold_left = LL.fold_left
 let fold_right = LL.lazy_fold_right
 let map = LL.map
