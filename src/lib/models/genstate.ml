@@ -23,7 +23,7 @@ let tl = Seq.tl
 let last = LL.last
 let next = LL.next
 let is_empty = LL.is_empty
-(* let nth = Seq.nth *)
+let nth = Seq.nth
 (* let cons = LL.cons *)
 let fold_left = LL.fold_left
 let fold_right = LL.lazy_fold_right
@@ -87,6 +87,8 @@ let sub_lazy_list start finish ll =
 let take_to_list start finish ll = 
   to_list (sub_lazy_list start finish ll)
 
+(* TODO If needed, has to be rewritten for Core.Sequence *)
+(*
 let lazy_take_at_idxs ns ll =
   let f acc elt =
     let i, ns', ll' = acc in
@@ -98,6 +100,7 @@ let lazy_take_at_idxs ns ll =
   in
   let _, _, result = fold_left f (0, ns, nil) ll in
   rev result
+*)
 
 let next_intsets pset =
   let n = 1 + L.hd (L.hd pset) in  (* Get next integer; previous one must be first in the first element. *)

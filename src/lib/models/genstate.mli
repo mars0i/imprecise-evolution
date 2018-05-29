@@ -23,7 +23,7 @@ val tl : 'a LL.t -> 'a LL.t
 val last : 'a LL.t -> 'a
 val next : 'a LL.t -> 'a LL.node_t
 val is_empty : 'a LL.t -> bool
-val at : 'a LL.t -> int -> 'a
+val nth : 'a LL.t -> int -> 'a
 val cons : 'a -> 'a LL.t -> 'a LL.t
 val fold_left : ('a -> 'b -> 'a) -> 'a -> 'b LL.t -> 'a
 val fold_right : ('a -> 'b Lazy.t -> 'b) -> 'a LL.t -> 'b Lazy.t -> 'b Lazy.t
@@ -86,7 +86,7 @@ val sub_lazy_list : int -> int -> 'a LL.t -> 'a LL.t
     from a LazyList, and convert the result to a List. *)
 val take_to_list : int -> int -> 'a LL.t -> 'a list
 
-val lazy_take_at_idxs : int list -> 'a LL.t -> 'a LL.t
+(* val lazy_take_at_idxs : int list -> 'a LL.t -> 'a LL.t *)
 
 (** Create a power set of integers from a smaller power set.
     Given a sequence of sequences representing the power set of non-negative
