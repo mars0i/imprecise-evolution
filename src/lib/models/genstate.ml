@@ -86,6 +86,7 @@ let sub_lazy_list start finish ll =
 let take_to_list start finish ll = 
   to_list (sub_lazy_list start finish ll)
 
+(*
 let lazy_take_at_idxs ns ll =
   let f acc elt =
     let i, ns', ll' = acc in
@@ -97,6 +98,7 @@ let lazy_take_at_idxs ns ll =
   in
   let _, _, result = fold_left f (0, ns, nil) ll in
   rev result
+*)
 
 let next_intsets pset =
   let n = 1 + L.hd (L.hd pset) in  (* Get next integer; previous one must be first in the first element. *)

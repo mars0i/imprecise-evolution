@@ -86,7 +86,7 @@ val sub_lazy_list : int -> int -> 'a LL.t -> 'a LL.t
     from a LazyList, and convert the result to a List. *)
 val take_to_list : int -> int -> 'a LL.t -> 'a list
 
-val lazy_take_at_idxs : int list -> 'a LL.t -> 'a LL.t
+(* val lazy_take_at_idxs : int list -> 'a LL.t -> 'a LL.t *)
 
 (** Create a power set of integers from a smaller power set.
     Given a sequence of sequences representing the power set of non-negative
