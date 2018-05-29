@@ -21,14 +21,17 @@ let make time state = {time ; state}
 let hd = Seq.hd
 let tl = Seq.tl
 let last = LL.last
-let next = LL.next
-let is_empty = LL.is_empty
+let next = Seq.next
+let is_empty = Seq.is_empty
 let nth = Seq.nth
 (* let cons = LL.cons *)
 let fold_left = Seq.fold
 (* let fold_right = LL.lazy_fold_right *)
 let map f xs = Seq.map ~f xs
+
+(* Note as written, f is (x, y) -> z, not x -> y -> z *)
 let map2 f xs1 xs2 = Seq.map ~f (Seq.zip xs1 xs2)  (* Is this inefficient?? *)
+
 let from_loop = LL.from_loop
 let iterate init f = S.memoize (S.unfold ~init ~f:(fun x -> Some (x, fn x)))
 (* or note these examples:
@@ -43,7 +46,7 @@ let to_list = Seq.to_list
 let rev = LL.rev
 (* let nil = LL.nil *)
 
-let lazy_ints ?(skip=1) init_n = 
+let lazy_ints ?(skip=1) init_n = iterate init_n (fun n -> n + skip)
 
 let lazy_select accessor keys data =
   let open LL in
