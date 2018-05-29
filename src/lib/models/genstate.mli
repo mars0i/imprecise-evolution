@@ -37,12 +37,10 @@ val drop : int -> 'a LL.t -> 'a LL.t
 val drop_while : ('a -> bool) -> 'a LL.t -> 'a LL.t
 val to_list : 'a LL.t -> 'a list
 val rev : 'a LL.t -> 'a LL.t
-val nil : 'a LL.t
-val lazy_range : ?step:int -> int -> int -> int LL.t
 
 
-(** [lazy_ints ~every:n init_n] returns an infinite sequence of
-    integers [~every] apart starting from [init_n].  [every]
+(** [lazy_ints ~skip:n init_n] returns an infinite sequence of
+    integers [~skip] apart starting from [init_n].  [skip]
     defaults to 1.  Giving it a negative value will produce a
     descending sequence. *)
 val lazy_ints : ?skip:int -> int -> int LL.t
@@ -85,8 +83,6 @@ val sub_lazy_list : int -> int -> 'a LL.t -> 'a LL.t
 (** Convenience function: Takes elements from start to finish, inclusive, 
     from a LazyList, and convert the result to a List. *)
 val take_to_list : int -> int -> 'a LL.t -> 'a list
-
-(* val lazy_take_at_idxs : int list -> 'a LL.t -> 'a LL.t *)
 
 (** Create a power set of integers from a smaller power set.
     Given a sequence of sequences representing the power set of non-negative
@@ -145,6 +141,7 @@ val simple_sums : int -> Mat.mat -> float list
 (** Map invert_prob_sum over each possible combination of atoms. *)
 val inverted_sums : int -> Mat.mat -> float list
 
+(*
 (** Calculate L values for all members of the algebra and return an
     (atoms, L-value) alist.  See (3) in Skulj. *)
 val pri_f_field_lowers : int -> Mat.mat -> Mat.mat -> (int list * float) list
@@ -152,6 +149,7 @@ val pri_f_field_lowers : int -> Mat.mat -> Mat.mat -> (int list * float) list
 (** Calculate U values for all members of the algebra and return an
     (atoms, U-value) alist.  See (4) in Skulj. *)
 val pri_f_field_uppers : int -> Mat.mat -> Mat.mat -> (int list * float) list
+*)
 
 (** [ints_from n] generates a lazy list of integers starting from [n]. *)
 val ints_from : int -> int LL.t

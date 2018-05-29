@@ -25,33 +25,25 @@ let next = LL.next
 let is_empty = LL.is_empty
 let nth = Seq.nth
 (* let cons = LL.cons *)
-let fold_left = LL.fold_left
-let fold_right = LL.lazy_fold_right
-let map = LL.map
-let map2 = LL.map2
+let fold_left = Seq.fold
+(* let fold_right = LL.lazy_fold_right *)
+let map f xs = Seq.map ~f xs
+let map2 f xs1 xs2 = Seq.map ~f (Seq.zip xs1 xs2)  (* Is this inefficient?? *)
 let from_loop = LL.from_loop
-let iterate init fn = LL.seq init fn always
-  (* version for Core.Sequence: let iterate init fn = S.memoize (S.unfold init (fun x -> Some (x, fn x))) *)
-let take = LL.take
-let take_while = LL.take_while
-let drop = LL.drop
-let drop_while = LL.drop_while
-let to_list = LL.to_list
+let iterate init f = S.memoize (S.unfold ~init ~f:(fun x -> Some (x, fn x)))
+(* or note these examples:
+let js = S.unfold_step ~init:0. ~f:(fun x -> S.Step.Yield (x**2., x +. 1.))
+let ks = S.unfold_step ~init:0. ~f:(fun x -> if x < 15. then S.Step.Yield (x**2., x +. 1.) else S.Step.Done)
+*)
+let take = Seq.take
+let take_while = Seq.take_while
+let drop = Seq.drop
+let drop_while = Seq.drop_while
+let to_list = Seq.to_list
 let rev = LL.rev
-let nil = LL.nil
+(* let nil = LL.nil *)
 
-let lazy_range ?(step=1) start stop = 
-  let open LL in
-  if start = stop then make 1 start
-  else let adjust_by, ineq =
-    if stop > start then (+), (>) else (-), (<)
-  in let rec aux curr stop' =
-     if ineq curr stop' then nil
-     else lazy (Cons (curr, aux (adjust_by curr step) stop'))
-  in aux start stop
-
-let lazy_ints ?(skip=1) init_n =
-  iterate init_n (fun n -> n + skip)
+let lazy_ints ?(skip=1) init_n = 
 
 let lazy_select accessor keys data =
   let open LL in
@@ -86,21 +78,6 @@ let sub_lazy_list start finish ll =
 
 let take_to_list start finish ll = 
   to_list (sub_lazy_list start finish ll)
-
-(* TODO If needed, has to be rewritten for Core.Sequence *)
-(*
-let lazy_take_at_idxs ns ll =
-  let f acc elt =
-    let i, ns', ll' = acc in
-    match ns' with
-    | [] -> acc
-    | n::nstl -> if i = n
-                 then (i+1, nstl, cons elt ll')
-                 else (i+1, ns', ll')
-  in
-  let _, _, result = fold_left f (0, ns, nil) ll in
-  rev result
-*)
 
 let next_intsets pset =
   let n = 1 + L.hd (L.hd pset) in  (* Get next integer; previous one must be first in the first element. *)
@@ -147,6 +124,7 @@ let simple_sums omega_max atom_extrema =
 let inverted_sums omega_max atom_extrema =
   L.map (invert_prob_sum omega_max atom_extrema) (at algebra_sets omega_max)
 
+(*
 let pri_f_field_lowers omega_max atom_mins atom_maxs =
   let mins = simple_sums omega_max atom_mins in
   let inverted_maxs = inverted_sums omega_max atom_maxs in
@@ -158,6 +136,7 @@ let pri_f_field_uppers omega_max atom_mins atom_maxs =
   let inverted_mins = inverted_sums omega_max atom_mins in
   let maxmaxs = L.map2 min maxs inverted_mins in
   L.combine (at algebra_sets omega_max) maxmaxs
+*)
 
 let ints_from n = iterate n ((+) 1) 
 
