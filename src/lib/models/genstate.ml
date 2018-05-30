@@ -61,9 +61,7 @@ let lazy_select accessor keys data =
   and lzsel ks ds = lazy (sel ks ds)
   in lzsel keys data
 
-(********************************************)
-(** Iteration functions *)
-
+(*
 let lazy_fold_right2 f l1 l2 init_val =
   let rec aux rest1 rest2 =
     lazy begin
@@ -73,14 +71,10 @@ let lazy_fold_right2 f l1 l2 init_val =
     end
   in
 aux l1 l2
+*)
 
-let take2list n lazy_list = (to_list (take n lazy_list))
-
-let sub_lazy_list start finish ll =
+let subseq start finish ll =
   take (finish - start + 1) (drop start ll)
-
-let take_to_list start finish ll = 
-  to_list (sub_lazy_list start finish ll)
 
 let ints_from n = iterate n ((+) 1) 
 

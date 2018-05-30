@@ -55,8 +55,7 @@ val lazy_ints : ?skip:int -> int -> int LL.t
     intersection of [keys] and [data]. *)
 val lazy_select : ('a -> 'b) -> 'b LL.t -> 'a LL.t -> 'a LL.t
 
-(** Iteration functions *)
-
+(*
 (* Based on Batteries.LazyList.lazy_fold_right *)
 (** [lazy_fold_right2 f l1 l2 init_val] folds function [f] over two lazy 
     lists [l1] and [l2], with initial value [init_val].  Note that for
@@ -72,17 +71,11 @@ val lazy_select : ('a -> 'b) -> 'b LL.t -> 'a LL.t -> 'a LL.t
 val lazy_fold_right2 :
   ('a -> 'b -> 'c lazy_t -> 'c) ->
   'a LL.t -> 'b LL.t -> 'c Lazy.t -> 'c lazy_t
-
-(** Convenience abbreviation for [LazyList.(to_list (take n lazy_list))] *)
-val take2list : int -> 'a LL.t -> 'a list
+*)
 
 (** Return a lazy list that's a sublist of the argument, from element start 
     (zero-based) to element finish, inclusive. *)
-val sub_lazy_list : int -> int -> 'a LL.t -> 'a LL.t
-
-(** Convenience function: Takes elements from start to finish, inclusive, 
-    from a LazyList, and convert the result to a List. *)
-val take_to_list : int -> int -> 'a LL.t -> 'a list
+val subseq : int -> int -> 'a LL.t -> 'a LL.t
 
 (** [ints_from n] generates a lazy list of integers starting from [n]. *)
 val ints_from : int -> int LL.t

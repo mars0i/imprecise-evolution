@@ -55,7 +55,7 @@ let marshal_tdists_list basename finite_tdists_list =
 (** Lazy list must be finite! *)
 let marshal_tdists_sublist basename start_gen last_gen tdists_list =
   marshal_tdists_list basename
-                           (T.sub_lazy_list start_gen last_gen tdists_list)
+                           (T.subseq start_gen last_gen tdists_list)
 
 let unmarshal_tdists_list filename =
   ((OU.marshal_from_file filename) : T.genstate_seq)
