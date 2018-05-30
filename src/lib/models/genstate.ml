@@ -78,13 +78,8 @@ let lazy_fold_right2 f l1 l2 init_val =
   in
 aux l1 l2
 
-let take2list n lazy_list = (to_list (take n lazy_list))
-
 let sub_lazy_list start finish ll =
   take (finish - start + 1) (drop start ll)
-
-let take_to_list start finish ll = 
-  to_list (sub_lazy_list start finish ll)
 
 (*
 let lazy_take_at_idxs ns ll =
@@ -99,6 +94,16 @@ let lazy_take_at_idxs ns ll =
   let _, _, result = fold_left f (0, ns, nil) ll in
   rev result
 *)
+
+let next_intsets pset =
+  let n = 1 + L.hd (L.hd pset) in  (* Get next integer; previous one must be first in the first element. *)
+  let addl_sets = (L.map (fun xs -> n :: xs) pset) in
+  (pset, addl_sets @ pset)
+
+let make_intsets () = from_loop [[0]; []] next_intsets
+
+(** A lazy list of integer power sets. *)
+let algebra_sets = make_intsets ()
 
 (*********** probabilities over algebras **********)
 

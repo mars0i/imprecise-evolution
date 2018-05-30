@@ -75,16 +75,9 @@ val lazy_fold_right2 :
   ('a -> 'b -> 'c lazy_t -> 'c) ->
   'a LL.t -> 'b LL.t -> 'c Lazy.t -> 'c lazy_t
 
-(** Convenience abbreviation for [LazyList.(to_list (take n lazy_list))] *)
-val take2list : int -> 'a LL.t -> 'a list
-
 (** Return a lazy list that's a sublist of the argument, from element start 
     (zero-based) to element finish, inclusive. *)
 val sub_lazy_list : int -> int -> 'a LL.t -> 'a LL.t
-
-(** Convenience function: Takes elements from start to finish, inclusive, 
-    from a LazyList, and convert the result to a List. *)
-val take_to_list : int -> int -> 'a LL.t -> 'a list
 
 (* val lazy_take_at_idxs : int list -> 'a LL.t -> 'a LL.t *)
 
