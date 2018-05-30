@@ -84,24 +84,6 @@ val sub_lazy_list : int -> int -> 'a LL.t -> 'a LL.t
     from a LazyList, and convert the result to a List. *)
 val take_to_list : int -> int -> 'a LL.t -> 'a list
 
-(** Create a power set of integers from a smaller power set.
-    Given a sequence of sequences representing the power set of non-negative
-    integers up through n-1, returns a pair consisting of the sequence of 
-    sequences for up through n-1 and one up through n.  (This kind of pair 
-    is what LazyList.from_loop wants.)  Assumes that the first element of 
-    the first element of the power set sequence pset passed in is n-1. *)
-val next_intsets : int list list -> int list list * int list list
-
-(** Generate a list of subsequent integer power sets. 
-    Return a lazy list of subsequent power sets of integers from 0 to n. 
-    They can be retreived using e.g., to get the power set of integers
-    up to 5: LazyList.at intsets 4 .  Note each power set is in the form
-    of a regular list; only the top level list is lazy. *)
-val make_intsets : unit -> int list list LL.t
-
-(** A lazy list of integer power sets. *)
-val algebra_sets : int list list LL.t
-
 (** [ints_from n] generates a lazy list of integers starting from [n]. *)
 val ints_from : int -> int LL.t
 
