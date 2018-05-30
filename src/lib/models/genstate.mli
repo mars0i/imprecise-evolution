@@ -102,55 +102,6 @@ val make_intsets : unit -> int list list LL.t
 (** A lazy list of integer power sets. *)
 val algebra_sets : int list list LL.t
 
-(*********** probabilities over algebras **********)
-
-(** Set difference for ordered lists of integers.
-    Given lists xs and ys that are both ordered in the same way (e.g. 
-    monotonically ordered integers), return a list containing all
-    elements of xs not in ys (with order preserved).  The elements
-    in ys must be a (perhaps improper) subset of xs.
-    This version by RichN at https://codereview.stackexchange.com/a/162407/61384 *)
-val subtract_list : 'a list -> 'a list -> 'a list
-
-(** Set complement for ordered lists of integers.
-    i.e. return the atoms representing the negation of the original set.
-    Given a maximum element omega_max and a subset of a domain of atoms 
-    represented by list of integers in decreasing order, return a list
-    of the integers, between 0 and omega_max inclusive, that are not in
-    the subset.  The returned list will also be in decreasing order.
-    Note that omega_max is one less than the size of the domain. *)
-val list_complement : int -> int list -> int list
-
-(** Given a vector of atom probabilities and a list of indexes representing
-    atoms, returns sum of probabilities for the set containing those atoms. *)
-val prob_sum : Mat.mat -> int list -> float
-
-(** Return (1 - the sum of probs of extreme probs) for a set of atoms
-    See (3) and (4) in Skulj. *)
-val invert_prob_sum : int -> Mat.mat -> int list -> float
-
-(** Given a probability vector, returns an alist of pairs for all
-    elements in the algebra of sets based on the atoms represented by
-    elements in the vector.  Each pair contains a list of indexes 
-    representing atoms in a set followed by the probability of that set. *)
-val algebra_probs : Mat.mat -> (int list * float) list
-
-(** Map prob_sum over each possible combination of atoms. *)
-val simple_sums : int -> Mat.mat -> float list
-
-(** Map invert_prob_sum over each possible combination of atoms. *)
-val inverted_sums : int -> Mat.mat -> float list
-
-(*
-(** Calculate L values for all members of the algebra and return an
-    (atoms, L-value) alist.  See (3) in Skulj. *)
-val pri_f_field_lowers : int -> Mat.mat -> Mat.mat -> (int list * float) list
-
-(** Calculate U values for all members of the algebra and return an
-    (atoms, U-value) alist.  See (4) in Skulj. *)
-val pri_f_field_uppers : int -> Mat.mat -> Mat.mat -> (int list * float) list
-*)
-
 (** [ints_from n] generates a lazy list of integers starting from [n]. *)
 val ints_from : int -> int LL.t
 
