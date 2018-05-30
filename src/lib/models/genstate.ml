@@ -18,6 +18,17 @@ let make time state = {time ; state}
 
 (** genstate_seq functions *) 
 
+(* NOTE these examples:
+numbers increasing as powers of 2:
+let ys = S.unfold_step ~init:1 ~f:(fun s -> Ss.Yield (s, s * 2))
+infinite sequence of squares:
+let js = S.unfold_step ~init:0. ~f:(fun x -> S.Step.Yield (x**2., x +. 1.))
+Stop when reach 15:
+let ks = S.unfold_step ~init:0. ~f:(fun x -> if x < 15. then S.Step.Yield (x**2., x +. 1.) else S.Step.Done)
+after 3, the next number is 14:
+let zs = S.unfold_step ~init:1 ~f:(fun x -> if x = 4 then Ss.Skip 14 else Ss.Yield (x, x + 1));;
+*)
+
 let hd = Seq.hd
 let tl = Seq.tl
 let last = LL.last
@@ -32,20 +43,14 @@ let map f xs = Seq.map ~f xs
 (* Note as written, f is (x, y) -> z, not x -> y -> z *)
 let map2 f xs1 xs2 = Seq.map ~f (Seq.zip xs1 xs2)  (* Is this inefficient?? *)
 
-let from_loop = LL.from_loop
 let iterate init f = S.memoize (S.unfold ~init ~f:(fun x -> Some (x, fn x)))
-(* or note these examples:
-let js = S.unfold_step ~init:0. ~f:(fun x -> S.Step.Yield (x**2., x +. 1.))
-let ks = S.unfold_step ~init:0. ~f:(fun x -> if x < 15. then S.Step.Yield (x**2., x +. 1.) else S.Step.Done)
-*)
 let take = Seq.take
 let take_while = Seq.take_while
 let drop = Seq.drop
 let drop_while = Seq.drop_while
 let to_list = Seq.to_list
-let rev = LL.rev
-(* let nil = LL.nil *)
 
+(* Note Core.Sequence.range doesn't allow an unbounded sequence. *)
 let lazy_ints ?(skip=1) init_n = iterate init_n (fun n -> n + skip)
 
 let lazy_select accessor keys data =
@@ -73,8 +78,7 @@ let lazy_fold_right2 f l1 l2 init_val =
 aux l1 l2
 *)
 
-let subseq start finish ll =
-  take (finish - start + 1) (drop start ll)
+let subseq start finish ll = Seq.sub ll start (finish - start + 1)
 
 let ints_from n = iterate n ((+) 1) 
 

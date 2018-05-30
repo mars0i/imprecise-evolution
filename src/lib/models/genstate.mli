@@ -36,7 +36,6 @@ val take_while : ('a -> bool) -> 'a LL.t -> 'a LL.t
 val drop : int -> 'a LL.t -> 'a LL.t
 val drop_while : ('a -> bool) -> 'a LL.t -> 'a LL.t
 val to_list : 'a LL.t -> 'a list
-val rev : 'a LL.t -> 'a LL.t
 
 
 (** [lazy_ints ~skip:n init_n] returns an infinite sequence of
@@ -99,6 +98,7 @@ val sublist : int -> int -> genstate LL.t -> genstate LL.t
 
 (** In [select_by_times generations genstate_seq], [generations] is a lazy
     list of integers in increasing order, and [genstate_seq] is a lazy
-    list of genstate.  The function returns a lazy list contanining those 
+    list of genstates.  The function returns a lazy list contanining those 
     genstate whose generation numbers match the integers in [generations]. *)
 val select_by_times : int LL.t -> genstate LL.t -> genstate LL.t
+
