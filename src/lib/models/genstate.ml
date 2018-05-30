@@ -100,63 +100,7 @@ let lazy_take_at_idxs ns ll =
   rev result
 *)
 
-let next_intsets pset =
-  let n = 1 + L.hd (L.hd pset) in  (* Get next integer; previous one must be first in the first element. *)
-  let addl_sets = (L.map (fun xs -> n :: xs) pset) in
-  (pset, addl_sets @ pset)
-
-let make_intsets () = from_loop [[0]; []] next_intsets
-
-(** A lazy list of integer power sets. *)
-let algebra_sets = make_intsets ()
-
 (*********** probabilities over algebras **********)
-
-
-let rec subtract_list xs ys =
-  match xs, ys with 
-  | [], _ -> []
-  | _, [] -> xs
-  | x::xs', y::ys' when x = y -> subtract_list xs' ys'
-  | x::xs', _ -> x::(subtract_list xs' ys)
-
-let list_complement omega_max subset =
-  let omega = L.range omega_max `Downto 0 in
-  subtract_list omega subset
-
-let prob_sum probs atom_idxs =
-  let add_prob sum idx = sum +. Mat.get probs 0 idx  (* Owl.Mat.get rather than .{i,j} to get type right *)
-  in L.fold_left add_prob 0. atom_idxs
-
-let invert_prob_sum omega_max atom_extrema subset_idxs = 
-  1. -. prob_sum atom_extrema (list_complement omega_max subset_idxs)
-
-(*********** algebras of indexes representing atoms **********)
-(*
-let algebra_probs probs = 
-  let i = (snd (Mat.shape probs)) - 1 in
-  let idx_sets = nth algebra_sets i in
-  let make_entry event = (event, prob_sum probs event) in
-  L.map make_entry idx_sets 
-
-let simple_sums omega_max atom_extrema =
-  L.map (prob_sum atom_extrema) (nth algebra_sets omega_max)
-
-let inverted_sums omega_max atom_extrema =
-  L.map (invert_prob_sum omega_max atom_extrema) (nth algebra_sets omega_max)
-
-let pri_f_field_lowers omega_max atom_mins atom_maxs =
-  let mins = simple_sums omega_max atom_mins in
-  let inverted_maxs = inverted_sums omega_max atom_maxs in
-  let minmins = L.map2 max mins inverted_maxs in
-  L.combine (nth algebra_sets omega_max) minmins
-
-let pri_f_field_uppers omega_max atom_mins atom_maxs =
-  let maxs = simple_sums omega_max atom_maxs in
-  let inverted_mins = inverted_sums omega_max atom_mins in
-  let maxmaxs = L.map2 min maxs inverted_mins in
-  L.combine (nth algebra_sets omega_max) maxmaxs
-*)
 
 let ints_from n = iterate n ((+) 1) 
 
