@@ -108,6 +108,8 @@ val algebra_sets : int list list LL.t
 
 (*********** probabilities over algebras **********)
 
+(*
+
 (** Set difference for ordered lists of integers.
     Given lists xs and ys that are both ordered in the same way (e.g. 
     monotonically ordered integers), return a list containing all
@@ -152,6 +154,7 @@ val pri_f_field_lowers : int -> Mat.mat -> Mat.mat -> (int list * float) list
 (** Calculate U values for all members of the algebra and return an
     (atoms, U-value) alist.  See (4) in Skulj. *)
 val pri_f_field_uppers : int -> Mat.mat -> Mat.mat -> (int list * float) list
+*)
 
 (** [ints_from n] generates a lazy list of integers starting from [n]. *)
 val ints_from : int -> int LL.t

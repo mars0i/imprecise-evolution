@@ -132,7 +132,7 @@ let invert_prob_sum omega_max atom_extrema subset_idxs =
   1. -. prob_sum atom_extrema (list_complement omega_max subset_idxs)
 
 (*********** algebras of indexes representing atoms **********)
-
+(*
 let algebra_probs probs = 
   let i = (snd (Mat.shape probs)) - 1 in
   let idx_sets = nth algebra_sets i in
@@ -156,6 +156,7 @@ let pri_f_field_uppers omega_max atom_mins atom_maxs =
   let inverted_mins = inverted_sums omega_max atom_mins in
   let maxmaxs = L.map2 min maxs inverted_mins in
   L.combine (nth algebra_sets omega_max) maxmaxs
+*)
 
 let ints_from n = iterate n ((+) 1) 
 
@@ -163,7 +164,6 @@ let add_times ?(first_tick=0) genstate_seq =
   map2 make (ints_from first_tick) genstate_seq
 
 let remove_times genstate_seq = map state genstate_seq
-
 let sublist start_time finish_time genstate_seq =
   take_while (fun gs -> gs.time <= finish_time)
                 (drop_while (fun gs -> gs.time < start_time)
