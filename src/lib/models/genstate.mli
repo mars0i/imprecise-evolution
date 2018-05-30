@@ -36,7 +36,6 @@ val take_while : ('a -> bool) -> 'a LL.t -> 'a LL.t
 val drop : int -> 'a LL.t -> 'a LL.t
 val drop_while : ('a -> bool) -> 'a LL.t -> 'a LL.t
 val to_list : 'a LL.t -> 'a list
-val rev : 'a LL.t -> 'a LL.t
 val nil : 'a LL.t
 val lazy_range : ?step:int -> int -> int -> int LL.t
 

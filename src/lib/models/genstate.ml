@@ -36,7 +36,6 @@ let take_while = LL.take_while
 let drop = LL.drop
 let drop_while = LL.drop_while
 let to_list = LL.to_list
-let rev = LL.rev
 let nil = LL.nil
 
 let lazy_range ?(step=1) start stop = 
