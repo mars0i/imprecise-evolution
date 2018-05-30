@@ -340,9 +340,7 @@ let _hi_mult ?(fork=true) ?(near_one=a_little_more_than_one) pmat qmat prev_hi_m
     your lazy list may become useless, and you'll have to regenerate it
     from scratch. *)
 
-(** Return pair of pairs: The first pair is the bounds matrices that were
-    passed as the third argument [(lo,hi)], unchanged, and the next bounds
-    matrix pair.  For use with [Batteries.LazyList.from_loop] *)
+(** Return the next bounds matrix pair. *)
 let next_bounds_mats ?(fork=true) pmat qmat p_row_sums q_row_sums (lo,hi) =
   let lo' = _lo_mult ~fork pmat qmat lo p_row_sums in
   let hi' = _hi_mult ~fork pmat qmat hi q_row_sums in
