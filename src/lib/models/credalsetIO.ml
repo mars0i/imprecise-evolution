@@ -12,7 +12,9 @@ let (%) f g = (fun x -> f (g x))
 
 (** Data file creation functions *)
 
+(*
 let tdists_marshal_ext = "mltds"
+*)
 (* let datafile_extension = ".mld" *)
 
 (*
@@ -41,7 +43,7 @@ let write_csv_tdists_list basename finite_tdists_list =
   ()
 *)
   
-
+(*
 (** [write_tdists_finite_list basename finite_tdists_list].
     Lazy list [finite_tdists_list] must be finite! *)
 let marshal_tdists_list basename finite_tdists_list =
@@ -59,6 +61,8 @@ let marshal_tdists_sublist basename start_gen last_gen tdists_list =
 
 let unmarshal_tdists_list filename =
   ((OU.marshal_from_file filename) : T.genstate_seq)
+*)
+
 
 (** PDF plot-writing functions *)
 
