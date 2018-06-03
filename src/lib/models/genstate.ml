@@ -20,13 +20,13 @@ let make time state = {time ; state}
 
 (* NOTE these examples:
 numbers increasing as powers of 2:
-let ys = S.unfold_step ~init:1 ~f:(fun s -> Ss.Yield (s, s * 2))
+let ys = Seq.unfold_step ~init:1 ~f:(fun s -> Ss.Yield (s, s * 2))
 infinite sequence of squares:
-let js = S.unfold_step ~init:0. ~f:(fun x -> S.Step.Yield (x**2., x +. 1.))
+let js = Seq.unfold_step ~init:0. ~f:(fun x -> Seq.Step.Yield (x**2., x +. 1.))
 Stop when reach 15:
-let ks = S.unfold_step ~init:0. ~f:(fun x -> if x < 15. then S.Step.Yield (x**2., x +. 1.) else S.Step.Done)
+let ks = Seq.unfold_step ~init:0. ~f:(fun x -> if x < 15. then Seq.Step.Yield (x**2., x +. 1.) else Seq.Step.Done)
 after 3, the next number is 14:
-let zs = S.unfold_step ~init:1 ~f:(fun x -> if x = 4 then Ss.Skip 14 else Ss.Yield (x, x + 1));;
+let zs = Seq.unfold_step ~init:1 ~f:(fun x -> if x = 4 then Ss.Skip 14 else Ss.Yield (x, x + 1));;
 *)
 
 let hd = Seq.hd
@@ -41,9 +41,19 @@ let fold_left = Seq.fold
 let map f xs = Seq.map ~f xs
 
 (* Note as written, f is (x, y) -> z, not x -> y -> z *)
+(*
 let map2 f xs1 xs2 = Seq.map ~f (Seq.zip xs1 xs2)  (* Is this inefficient?? *)
+*)
 
-let iterate init f = S.memoize (S.unfold ~init ~f:(fun x -> Some (x, fn x)))
+let rec map2 f xs1 xs2 =
+  let open Seq.Step in
+  match xs1, xs2 with
+  | (Done, _)   | (_, Done) -> Done
+  | (Yield (x1, rest1), Yield (x2, rest2)) ->
+      Yield ((f x1 x2), map2 f rest1 rest2)
+  | (Skip _, _) | (_, Skip _) -> failwith "Skip-handling not implemented"
+
+let iterate init f = Seq.memoize (Seq.unfold ~init ~f:(fun x -> Some (x, f x)))
 let take = Seq.take
 let take_while = Seq.take_while
 let drop = Seq.drop
