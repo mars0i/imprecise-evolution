@@ -12,54 +12,6 @@ let (%) f g = (fun x -> f (g x))
 
 (** Data file creation functions *)
 
-let tdists_marshal_ext = "mltds"
-(* let datafile_extension = ".mld" *)
-
-(*
-let tdists_list_to_idx_cols finite_tdists_list =
-  let open T in
-  let cols_for_one_tdists td =
-    let len = L.length td.state in
-    Mat.concat_horizontal (Mat.create len 1 (float td.time))
-                          (Mat.of_array (A.of_list td.state) len 1)
-  in
-  let llist_of_mats = T.map cols_for_one_tdists finite_tdists_list in
-  (* concat 'em here *)
-  ()
-*)
-
-
-(*
-let write_csv_tdists_list basename finite_tdists_list =
-  let open T in
-  let first_gen = (T.hd finite_tdists_list).time in
-  let last_gen = (T.last finite_tdists_list).time in
-  let filename = Printf.sprintf "%s%02dto%02d.%s" basename first_gen last_gen "csv" in
-  (* make header row *)
-  (* construct data rows *)
-  (* Mat.save_txt  ...*)
-  ()
-*)
-  
-
-(** [write_tdists_finite_list basename finite_tdists_list].
-    Lazy list [finite_tdists_list] must be finite! *)
-let marshal_tdists_list basename finite_tdists_list =
-  let open T in
-  let first_gen = (T.hd finite_tdists_list).time in
-  let last_gen = (T.last finite_tdists_list).time in
-  let filename = Printf.sprintf "%s%02dto%02d.%s" 
-                                 basename first_gen last_gen tdists_marshal_ext in
-  OU.marshal_to_file finite_tdists_list filename
-
-(** Lazy list must be finite! *)
-let marshal_tdists_sublist basename start_gen last_gen tdists_list =
-  marshal_tdists_list basename
-                           (T.subseq start_gen last_gen tdists_list)
-
-let unmarshal_tdists_list filename =
-  ((OU.marshal_from_file filename) : T.genstate_seq)
-
 (** PDF plot-writing functions *)
 
 let default_fontsize = 3.25
@@ -256,3 +208,56 @@ let make_setchain_bounds_pdfs ?(addl_2D_fn=fill_bounds)
             ~leftright ~rows ~cols ~sample_interval ?plot_max ?fontsize
             basename tdistlists
 
+
+(***************************************************)
+(* OBSOLETE OR IN NEED OF ATTENTION *)
+
+(*
+let tdists_list_to_idx_cols finite_tdists_list =
+  let open T in
+  let cols_for_one_tdists td =
+    let len = L.length td.state in
+    Mat.concat_horizontal (Mat.create len 1 (float td.time))
+                          (Mat.of_array (A.of_list td.state) len 1)
+  in
+  let llist_of_mats = T.map cols_for_one_tdists finite_tdists_list in
+  (* concat 'em here *)
+  ()
+*)
+
+
+(*
+let write_csv_tdists_list basename finite_tdists_list =
+  let open T in
+  let first_gen = (T.hd finite_tdists_list).time in
+  let last_gen = (T.last finite_tdists_list).time in
+  let filename = Printf.sprintf "%s%02dto%02d.%s" basename first_gen last_gen "csv" in
+  (* make header row *)
+  (* construct data rows *)
+  (* Mat.save_txt  ...*)
+  ()
+*)
+  
+
+(*
+let tdists_marshal_ext = "mltds"
+(* let datafile_extension = ".mld" *)
+
+(** [write_tdists_finite_list basename finite_tdists_list].
+    Lazy list [finite_tdists_list] must be finite! *)
+let marshal_tdists_list basename finite_tdists_list =
+  let open T in
+  let first_gen = (T.hd finite_tdists_list).time in
+  let last_gen = (T.last finite_tdists_list).time in
+  let filename = Printf.sprintf "%s%02dto%02d.%s" 
+                                 basename first_gen last_gen tdists_marshal_ext in
+  OU.marshal_to_file finite_tdists_list filename
+
+(** Lazy list must be finite! *)
+let marshal_tdists_sublist basename start_gen last_gen tdists_list =
+  marshal_tdists_list basename
+                           (T.subseq start_gen last_gen tdists_list)
+
+let unmarshal_tdists_list filename =
+  ((OU.marshal_from_file filename) : T.genstate_seq)
+*)
