@@ -40,10 +40,17 @@ let fold_left = Seq.fold
 (* let fold_right = LL.lazy_fold_right *)
 let map f xs = Seq.map ~f xs
 
-(* Note as written, f is (x, y) -> z, not x -> y -> z *)
+let map2 f xs ys = map ~f:(fun (x, y) -> f x y) (zip xs ys)
+
 (*
-let map2 f xs1 xs2 = Seq.map ~f (Seq.zip xs1 xs2)  (* Is this inefficient?? *)
-*)
+let map2 f t1 t2 =
+  match t1, t2 with
+  | Sequence(seed1, next1), Sequence(seed2, next2) ->
+    Sequence(seed,
+             fun (seed1, seed2) ->
+               match next1 seed1, next2 seed2 with
+               | Done, _ | _, Done -> Done
+               | Yield(a1, s1), Yield(a2, s2) -> Skip(f a1 a2)
 
 let rec map2 f xs1 xs2 =
   let open Seq.Step in
@@ -52,6 +59,7 @@ let rec map2 f xs1 xs2 =
   | (Yield (x1, rest1), Yield (x2, rest2)) ->
       Yield ((f x1 x2), map2 f rest1 rest2)
   | (Skip _, _) | (_, Skip _) -> failwith "Skip-handling not implemented"
+*)
 
 let iterate init f = Seq.memoize (Seq.unfold ~init ~f:(fun x -> Some (x, f x)))
 let take = Seq.take
