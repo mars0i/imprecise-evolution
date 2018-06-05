@@ -3,6 +3,8 @@ module L = Batteries.List
 module LL = Batteries.LazyList
 module Seq = Core.Sequence
 
+let (%) f g = (fun x -> f (g x))
+
 let always _ = true
 
 type genstate = {time : int ; state : Mat.mat list}
@@ -29,15 +31,13 @@ after 3, the next number is 14:
 let zs = Seq.unfold_step ~init:1 ~f:(fun x -> if x = 4 then Ss.Skip 14 else Ss.Yield (x, x + 1));;
 *)
 
-let hd = Seq.hd
-let tl = Seq.tl
-let last = LL.last
+let hd = Seq.hd_exn
+let tl = Seq.tl_eagerly_exn
+let cons x xs = Seq.(append (singleton x) xs)
 let next = Seq.next
 let is_empty = Seq.is_empty
 let nth = Seq.nth
-(* let cons = LL.cons *)
 let fold_left = Seq.fold
-(* let fold_right = LL.lazy_fold_right *)
 let map f xs = Seq.map ~f xs
 
 (* let map2 f xs ys = Seq.map ~f:(fun (x, y) -> f x y) (Seq.zip xs ys) *)
