@@ -40,26 +40,16 @@ let fold_left = Seq.fold
 (* let fold_right = LL.lazy_fold_right *)
 let map f xs = Seq.map ~f xs
 
-let map2 f xs ys = map ~f:(fun (x, y) -> f x y) (zip xs ys)
+(* let map2 f xs ys = Seq.map ~f:(fun (x, y) -> f x y) (Seq.zip xs ys) *)
 
-(*
-let map2 f t1 t2 =
-  match t1, t2 with
-  | Sequence(seed1, next1), Sequence(seed2, next2) ->
-    Sequence(seed,
-             fun (seed1, seed2) ->
-               match next1 seed1, next2 seed2 with
-               | Done, _ | _, Done -> Done
-               | Yield(a1, s1), Yield(a2, s2) -> Skip(f a1 a2)
-
-let rec map2 f xs1 xs2 =
-  let open Seq.Step in
-  match xs1, xs2 with
-  | (Done, _)   | (_, Done) -> Done
-  | (Yield (x1, rest1), Yield (x2, rest2)) ->
-      Yield ((f x1 x2), map2 f rest1 rest2)
-  | (Skip _, _) | (_, Skip _) -> failwith "Skip-handling not implemented"
-*)
+(* Based on Yaron Minsky's def at https://discuss.ocaml.org/t/how-to-write-map2-for-base-sequence/2090/3?u=mars0i *)
+let map2 f s1 s2 =
+  Sequence.unfold ~init:(s1,s2)
+    ~f:(fun (s1,s2) ->
+      match Sequence.next s1, Sequence.next s2 with
+      | None, _ | _, None -> None
+      | Some (x1, rest1), Some (x2, rest2) -> Some (f x1 x2, (rest1, rest2)))
+(* Notes: *)
 
 let iterate init f = Seq.memoize (Seq.unfold ~init ~f:(fun x -> Some (x, f x)))
 let take = Seq.take
@@ -106,9 +96,9 @@ let add_times ?(first_tick=0) genstate_seq =
 let remove_times genstate_seq = map state genstate_seq
 
 let sublist start_time finish_time genstate_seq =
-  take_while (fun gs -> gs.time <= finish_time)
-                (drop_while (fun gs -> gs.time < start_time)
-		               genstate_seq)
+  Seq.take_while ~f:(fun gs -> gs.time <= finish_time)
+                 (Seq.drop_while ~f:(fun gs -> gs.time < start_time)
+		                 genstate_seq)
 
 let select_by_times generations genstate_seq =
   lazy_select time generations genstate_seq
