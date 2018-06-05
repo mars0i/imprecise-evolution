@@ -20,6 +20,36 @@ let make time state = {time ; state}
 
 (** genstate_seq functions *) 
 
+let hd = Seq.hd_exn
+let tl = Seq.tl_eagerly_exn
+let cons x xs = Seq.(append (singleton x) xs)
+let next = Seq.next
+let is_empty = Seq.is_empty
+let nth = Seq.nth
+let fold_left = Seq.fold
+let map f xs = Seq.map ~f xs
+
+
+let iterate init f = Seq.memoize (Seq.unfold ~init ~f:(fun x -> Some (x, f x)))
+let take = Seq.take
+let take_while = Seq.take_while
+let drop = Seq.drop
+let drop_while = Seq.drop_while
+let to_list = Seq.to_list
+
+(* Note Core.Sequence.range doesn't allow an unbounded sequence. *)
+let ints ?(stride=1) init_n = iterate init_n (fun n -> n + skip)
+
+(* let map2 f xs ys = Seq.map ~f:(fun (x, y) -> f x y) (Seq.zip xs ys) *)
+
+(* Based on Yaron Minsky's def at https://discuss.ocaml.org/t/how-to-write-map2-for-base-sequence/2090/3?u=mars0i *)
+let map2 f s1 s2 =
+  Seq.unfold ~init:(s1,s2)
+    ~f:(fun (s1,s2) ->
+      match Seq.next s1, Seq.next s2 with
+      | None, _ | _, None -> None
+      | Some (x1, rest1), Some (x2, rest2) -> Some (f x1 x2, (rest1, rest2)))
+
 (* NOTE these examples:
 numbers increasing as powers of 2:
 let ys = Seq.unfold_step ~init:1 ~f:(fun s -> Ss.Yield (s, s * 2))
@@ -31,36 +61,16 @@ after 3, the next number is 14:
 let zs = Seq.unfold_step ~init:1 ~f:(fun x -> if x = 4 then Ss.Skip 14 else Ss.Yield (x, x + 1));;
 *)
 
-let hd = Seq.hd_exn
-let tl = Seq.tl_eagerly_exn
-let cons x xs = Seq.(append (singleton x) xs)
-let next = Seq.next
-let is_empty = Seq.is_empty
-let nth = Seq.nth
-let fold_left = Seq.fold
-let map f xs = Seq.map ~f xs
+let select accessor keys data =
+  let open Seq.Step in
+  Seq.unfold_step ~init:(keys, data)
+    ~f:(fun (ks, ds) ->
+      match Seq.next ks, Seq.next ds with
+      | Done, _ -> Done
+      | Yield (k, k_rest), Yield (d, d_rest)  -> 
+        if k = (accessor d) then Yield (d, d_rest) else Skip d_rest)
 
-(* let map2 f xs ys = Seq.map ~f:(fun (x, y) -> f x y) (Seq.zip xs ys) *)
-
-(* Based on Yaron Minsky's def at https://discuss.ocaml.org/t/how-to-write-map2-for-base-sequence/2090/3?u=mars0i *)
-let map2 f s1 s2 =
-  Seq.unfold ~init:(s1,s2)
-    ~f:(fun (s1,s2) ->
-      match Seq.next s1, Seq.next s2 with
-      | None, _ | _, None -> None
-      | Some (x1, rest1), Some (x2, rest2) -> Some (f x1 x2, (rest1, rest2)))
-(* Notes: *)
-
-let iterate init f = Seq.memoize (Seq.unfold ~init ~f:(fun x -> Some (x, f x)))
-let take = Seq.take
-let take_while = Seq.take_while
-let drop = Seq.drop
-let drop_while = Seq.drop_while
-let to_list = Seq.to_list
-
-(* Note Core.Sequence.range doesn't allow an unbounded sequence. *)
-let lazy_ints ?(skip=1) init_n = iterate init_n (fun n -> n + skip)
-
+(* OBSOLETE *)
 let lazy_select accessor keys data =
   let open LL in
   let rec sel ks ds =
