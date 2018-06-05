@@ -44,9 +44,9 @@ let map f xs = Seq.map ~f xs
 
 (* Based on Yaron Minsky's def at https://discuss.ocaml.org/t/how-to-write-map2-for-base-sequence/2090/3?u=mars0i *)
 let map2 f s1 s2 =
-  Sequence.unfold ~init:(s1,s2)
+  Seq.unfold ~init:(s1,s2)
     ~f:(fun (s1,s2) ->
-      match Sequence.next s1, Sequence.next s2 with
+      match Seq.next s1, Seq.next s2 with
       | None, _ | _, None -> None
       | Some (x1, rest1), Some (x2, rest2) -> Some (f x1 x2, (rest1, rest2)))
 (* Notes: *)
