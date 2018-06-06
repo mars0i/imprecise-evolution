@@ -26,16 +26,14 @@ let tl = S.tl_eagerly_exn
 let cons x xs = S.(append (singleton x) xs)
 let next = S.next
 let is_empty = S.is_empty
-let nth = S.nth
-let fold_left = S.fold
+let nth = S.nth_exn
+let fold_left f init seq = S.fold ~f ~init seq
 let map f xs = S.map ~f xs
-
-
 let iterate init f = S.memoize (S.unfold ~init ~f:(fun x -> Some (x, f x)))
-let take = S.take
-let take_while = S.take_while
-let drop = S.drop
-let drop_while = S.drop_while
+let take n seq = S.take seq n
+let take_while f seq = S.take_while ~f seq
+let drop n seq = S.drop seq n
+let drop_while f seq = S.drop_while ~f seq
 let to_list = S.to_list
 
 (* Note Core.Sequence.range doesn't allow an unbounded sequence. *)
