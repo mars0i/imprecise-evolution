@@ -70,15 +70,15 @@ let subseq start finish ll = S.sub ll start (finish - start + 1)
 
 let ints_from n = iterate n ((+) 1) 
 
-let add_times ?(first_tick=0) genstate_seq =
-  map2 make (ints_from first_tick) genstate_seq
+let add_times ?(first_tick=0) genstates =
+  map2 make (ints_from first_tick) genstates
 
-let remove_times genstate_seq = map state genstate_seq
+let remove_times genstates = map state genstates
 
-let sublist start_time finish_time genstate_seq =
+let sublist start_time finish_time genstates =
   S.take_while ~f:(fun gs -> gs.time <= finish_time)
                  (S.drop_while ~f:(fun gs -> gs.time < start_time)
-		                 genstate_seq)
+		                 genstates)
 
-let select_by_times generations genstate_seq =
-  select time generations genstate_seq
+let select_by_times generations genstates =
+  select time generations genstates
