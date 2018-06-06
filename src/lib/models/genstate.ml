@@ -67,7 +67,7 @@ let select_in_order is_before accessor keys vals =
          if is_empty ks || is_empty vs then Done 
          else let k, v = hd_exn ks, hd_exn vs in
               let vtag = accessor v in
-              if k = vtag
+              if k = vtag  (* found element in vs; add it to output seq: *)
 	      then Yield (k, (tl_eagerly_exn ks, tl_eagerly_exn vs))
               else if is_before k vtag   (* maybe there are gaps in vals *)
               then Skip (ks, tl_eagerly_exn vs)  (* let vs catch up *)
