@@ -446,6 +446,6 @@ let make_setchain_from_fitns ?(verbose=false) ?(fork=true) ?(skip=1)
 
   if verbose then Printf.printf "making tdists list ... %!";
   let tdistlists = T.add_times (lazy_prob_intervals_from_freq initfreq bounds_mats) in
-  let selected_times = T.ints ~skip:skip 1 in (* 1, i.e. don't display initial dist 0 massed on initfreq *)
+  let selected_times = T.ints ~stride:skip 1 in (* 1, i.e. don't display initial dist 0 massed on initfreq *)
   let selected_tdistlists = T.sublist startgen lastgen (T.select_by_times selected_times tdistlists) in
   selected_tdistlists
