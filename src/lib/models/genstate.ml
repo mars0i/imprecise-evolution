@@ -1,6 +1,4 @@
 module Mat = Owl.Mat
-module L = Batteries.List
-module LL = Batteries.LazyList
 module S = Core.Sequence
 module Ss = Core.Sequence.Step
 
