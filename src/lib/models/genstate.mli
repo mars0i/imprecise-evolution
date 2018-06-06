@@ -15,8 +15,6 @@ val time : genstate -> int
 val state : genstate -> Mat.mat list
 val make : int -> Mat.mat list -> genstate
 
-(** tdistslist functions *) 
-
 val hd : 'a S.t -> 'a
 val tl : 'a S.t -> 'a S.t
 val next : 'a S.t -> ('a * 'a S.t) option
