@@ -68,7 +68,7 @@ let select_in_order is_before accessor keys vals =
          else let k, v = hd_exn ks, hd_exn vs in
               let vtag = accessor v in
               if k = vtag
-	      then Yield (k,(tl_eagerly_exn ks, tl_eagerly_exn vs))
+	      then Yield (k, (tl_eagerly_exn ks, tl_eagerly_exn vs))
               else if is_before k vtag   (* maybe there are gaps in vals *)
               then Skip (ks, tl_eagerly_exn vs)  (* let vs catch up *)
               else Skip (tl_eagerly_exn ks, vs)) (* let ks catch up *)
