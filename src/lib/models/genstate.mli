@@ -54,24 +54,6 @@ in the same direction.  Example:
 *)
 val select : ('a -> 'b) -> 'b S.t -> 'a S.t -> 'a S.t
 
-(*
-(* Based on Batteries.LazyList.lazy_fold_right *)
-(** [lazy_fold_right2 f l1 l2 init_val] folds function [f] over two lazy 
-    lists [l1] and [l2], with initial value [init_val].  Note that for
-    constructing lazy lists, one must use [Cons] and [nil] rather than
-    [cons] and [nil], as with the [LazyList] eager fold functions:
-    {[
-      let natnos = iterate 0 ((+) 1)
-      let posints = iterate 1 ((+) 1)
-      let prods = lazy_fold_right2 (fun x y acc -> Cons(x*y, acc)) natnos posints TL.nil;;
-      (to_list (take 10 prods));;
-      - : int list = [0; 2; 6; 12; 20; 30; 42; 56; 72; 90]
-    ]} *)
-val lazy_fold_right2 :
-  ('a -> 'b -> 'c lazy_t -> 'c) ->
-  'a S.t -> 'b S.t -> 'c Lazy.t -> 'c lazy_t
-*)
-
 (** Return a lazy list that's a sublist of the argument, from element start 
     (zero-based) to element finish, inclusive. *)
 val subseq : int -> int -> 'a S.t -> 'a S.t
