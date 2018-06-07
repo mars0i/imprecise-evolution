@@ -46,17 +46,7 @@ let map2 f s1 s2 =
       | None, _ | _, None -> None
       | Some (x1, rest1), Some (x2, rest2) -> Some (f x1 x2, (rest1, rest2)))
 
-(**
-Example:
-{[
-    let vals = Sq.zip (Sq.repeat "foo") (Sq.range 0 10)
-    let keys = Sq.of_list [2;3;5]
-    select snd keys vals2 |> Sq.to_list
-    - : (string * int) list = [("foo", 2); ("foo", 3); ("foo", 5)]
-]}
-*)
-
-let id x = x
+let id x = x (* for use by select_in_order *)
 
 (* There's probably a more idiomatic way to do this. *)
 let select_in_order is_before accessor keys vals =
@@ -73,7 +63,9 @@ let select_in_order is_before accessor keys vals =
               then Skip (ks, tl_eagerly_exn vs)  (* let vs catch up *)
               else Skip (tl_eagerly_exn ks, vs)) (* let ks catch up *)
 
-let select = select_in_order (>) 
+(* REMAIN IN genstate.ml *)
+let select_by_times generations genstates =
+  select_in_order (>) time generations genstates
 
 let subseq start finish ll = Sq.sub ll start (finish - start + 1)
 
@@ -88,6 +80,3 @@ let sublist start_time finish_time genstates =
   Sq.take_while ~f:(fun gs -> gs.time <= finish_time)
                  (Sq.drop_while ~f:(fun gs -> gs.time < start_time)
 		                 genstates)
-
-let select_by_times generations genstates =
-  select time generations genstates

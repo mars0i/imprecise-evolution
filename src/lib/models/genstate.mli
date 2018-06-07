@@ -55,21 +55,6 @@ function [is_before]
 *)
 val select_in_order : ('a -> 'a -> bool) -> ('b -> 'a) -> 'a Sq.t -> 'b Sq.t -> 'b Sq.t
 
-(** 
-In [select accessor keys data], [keys] and [data] are lazy
-sequences.  The function returns a lazy sequence of elements from [data]
-such that [accessor val] is numerically equal to some element [keys].  Both 
-keys and the values by which elements of [data] are selected must be 
-monotonically increasing.  Example:
-{[
-    let vals = Sq.zip (Sq.repeat "foo") (Sq.range 0 10)
-    let keys = Sq.of_list [2;3;5]
-    select snd keys vals2 |> Sq.to_list
-    - : (string * int) list = [("foo", 2); ("foo", 3); ("foo", 5)]
-]}
-*)
-val select : ('a -> int) -> int Sq.t -> 'a Sq.t -> 'a Sq.t
-
 (** Identity function (useful with [select]). *)
 val id : 'a -> 'a
 
