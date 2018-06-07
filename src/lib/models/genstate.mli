@@ -53,7 +53,7 @@ function [is_before]
     - : (string * int) list = [("foo", 2); ("foo", 3); ("foo", 5)]
 ]}
 *)
-val select_in_order : ('a -> 'a -> bool) -> ('b -> 'a) -> 'a Sq.t -> 'b Sq.t -> 'a Sq.t
+val select_in_order : ('a -> 'a -> bool) -> ('b -> 'a) -> 'a Sq.t -> 'b Sq.t -> 'b Sq.t
 
 (** 
 In [select accessor keys data], [keys] and [data] are lazy

@@ -60,20 +60,20 @@ let id x = x
 
 (* There's probably a more idiomatic way to do this. *)
 let select_in_order is_before accessor keys vals =
-  let open Core.Sequence in
-  let open Core.Sequence.Step in
+  let open Sq in
+  let open Sq.Step in
   unfold_step ~init:(keys, vals)
     ~f:(fun (ks, vs) -> 
          if is_empty ks || is_empty vs then Done 
          else let k, v = hd_exn ks, hd_exn vs in
               let vtag = accessor v in
               if k = vtag  (* found element in vs; add it to output seq: *)
-	      then Yield (k, (tl_eagerly_exn ks, tl_eagerly_exn vs))
+	      then Yield (v, (tl_eagerly_exn ks, tl_eagerly_exn vs))
               else if is_before k vtag   (* maybe there are gaps in vals *)
               then Skip (ks, tl_eagerly_exn vs)  (* let vs catch up *)
               else Skip (tl_eagerly_exn ks, vs)) (* let ks catch up *)
 
-let select = select_in_order (>)
+let select = select_in_order (>) 
 
 let subseq start finish ll = Sq.sub ll start (finish - start + 1)
 
