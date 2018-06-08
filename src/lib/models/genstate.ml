@@ -56,14 +56,14 @@ let select_in_order is_before accessor keys vals =
     ~f:(fun (ks, vs) -> 
          if is_empty ks || is_empty vs then Done 
          else let k, v = hd_exn ks, hd_exn vs in
-              let vtag = accessor v in
-              if k = vtag  (* found element in vs; add it to output seq: *)
+              let vtag = accessor v in (* data from v that we'll compare *)
+              if k = vtag  (* found element in vs; add it to output, move on: *)
 	      then Yield (v, (tl_eagerly_exn ks, tl_eagerly_exn vs))
               else if is_before k vtag   (* maybe there are gaps in vals *)
               then Skip (ks, tl_eagerly_exn vs)  (* let vs catch up *)
               else Skip (tl_eagerly_exn ks, vs)) (* let ks catch up *)
 
-(* REMAIN IN genstate.ml *)
+(* KEEP IN genstate.ml *)
 let select_by_times generations genstates =
   select_in_order (>) time generations genstates
 
