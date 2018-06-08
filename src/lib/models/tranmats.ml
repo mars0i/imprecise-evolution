@@ -5,7 +5,7 @@
 
 module Mat = Owl.Mat
 module L = Batteries.List
-module T = Genstate
+(* Also uses Models.Seq *)
 
 (** The general goal here is to create a "distlist", which is a 
     LazyList of Lists Owl row vector matrices representing probability
@@ -33,4 +33,4 @@ let next_dists tranmats dists =
     will produce 2**1 = 2 dists.  Or with more initial distributions, the
     number of dists at n is (length init_dists) * (length tranmats)**n . *)
 let make_distlists_from_mats tranmats init_dists =
-  T.iterate init_dists (next_dists tranmats)
+  Seq.iterate init_dists (next_dists tranmats)

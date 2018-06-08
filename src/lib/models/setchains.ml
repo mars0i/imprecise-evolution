@@ -9,7 +9,7 @@ module Pmap = Parmap
 
 module G = Utils.Genl
 module WF = Wrightfisher
-module T = Genstate
+module GS = Genstate
 
 let a_little_more_than_one = 1. +. 1.0e-10
 let a_little_less_than_one = 1. -. 1.0e-10
@@ -182,9 +182,9 @@ let fitns = W.([{w11=1.0; w12=0.5; w22=0.2}; {w11=1.0; w12=0.8; w22=0.1}]);;
 let pmat, qmat = S.make_wf_interval 100 fitns;;
 let bounds_mats =  S.lazy_bounds_mats_list pmat qmat;;
 let intervals = S.lazy_prob_intervals_from_freq 50 bounds_mats;;
-let tdistlists = T.add_times intervals;;
+let tdistlists = GS.add_times intervals;;
 I.make_setchain_bounds_pdfs ~rows:2 ~cols:3 "foo"
-                            (T.sublist 1 12 tdistlists);;
+                            (Seq.subseq 1 12 tdistlists);;
 ]}
 More variations are illustrated in setchainPDFs.ml. *)
 
@@ -351,7 +351,7 @@ let next_bounds_mats ?(fork=true) pmat qmat p_row_sums q_row_sums (lo,hi) =
     by [qmat] *)
 let lazy_bounds_mats_list ?(fork=true) pmat qmat =
   let p_row_sums, q_row_sums = M.sum_cols pmat, M.sum_cols qmat in (* sum_cols means add col vecs, = new col vec w/ sum of ea row *)
-  T.iterate (pmat, qmat) (next_bounds_mats ~fork pmat qmat p_row_sums q_row_sums)
+  Seq.iterate (pmat, qmat) (next_bounds_mats ~fork pmat qmat p_row_sums q_row_sums)
 
 (** Convenience version of lazy_bounds_mats_list that takes
     (pmat, qmat) as argument rather than pmat and qmat. *)
@@ -378,9 +378,9 @@ let freq_mult freq (lo_mat, hi_mat) =
     be the initial interval: a list containing two copies of a vector with
     1.0 at index freq and 0.0 everywhere else. *)
 let lazy_prob_intervals_from_freq freq bounds_mats_list =
-  let size, _ = M.shape (fst (T.hd bounds_mats_list)) in
+  let size, _ = M.shape (fst (Seq.hd bounds_mats_list)) in
   let init_dist = (WF.make_init_dist size freq) in
-  T.cons [init_dist; init_dist] (T.map (freq_mult freq) bounds_mats_list)
+  Seq.cons [init_dist; init_dist] (Seq.map (freq_mult freq) bounds_mats_list)
 
 
 (** {b Functions for making matrix intervals:} *)
@@ -445,7 +445,7 @@ let make_setchain_from_fitns ?(verbose=false) ?(fork=true) ?(skip=1)
   let bounds_mats =  lazy_bounds_mats_list ~fork pmat qmat in
 
   if verbose then Printf.printf "making tdists list ... %!";
-  let tdistlists = T.add_times (lazy_prob_intervals_from_freq initfreq bounds_mats) in
-  let selected_times = T.ints ~stride:skip 1 in (* 1, i.e. don't display initial dist 0 massed on initfreq *)
-  let selected_tdistlists = T.sublist startgen lastgen (T.select_by_times selected_times tdistlists) in
+  let tdistlists = GS.add_times (lazy_prob_intervals_from_freq initfreq bounds_mats) in
+  let selected_times = Seq.ints ~stride:skip 1 in (* 1, i.e. don't display initial dist 0 massed on initfreq *)
+  let selected_tdistlists = Seq.subseq startgen lastgen (GS.select_by_times selected_times tdistlists) in
   selected_tdistlists

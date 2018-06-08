@@ -6,7 +6,8 @@ module OU = Owl.Utils
 module L = Batteries.List
 module A = Batteries.Array
 module G = Utils.Genl
-module T = Genstate
+module GS = Genstate
+(* Also uses Models.Seq *)
 
 let (%) f g = (fun x -> f (g x))
 
@@ -32,7 +33,7 @@ let abs_sort_dists dists = L.sort G.absdiff_compare dists
 type pdfdims = TwoD | ThreeD | BothDs
 
 let make_page_groups pdfdim plots_per_page tdistlists =
-  let nonlazytdistlists = T.to_list tdistlists in
+  let nonlazytdistlists = Seq.to_list tdistlists in
   let nonlazytdistlists' = 
     match pdfdim with (* if BothDs, we'll make 2 plots for each generation, so duplicate 'em *)
     | BothDs -> L.concat (L.fold_right (fun e acc -> [e;e]::acc) 
@@ -153,7 +154,7 @@ let make_pdfs ?(leftright=true) ?(pdfdim=ThreeD) ?(rows=1) ?(cols=1)
   let make_pdf group_idx page_group = 
     (* Construct filename from basename and generation numbers: *)
     let group_len = A.length page_group in  (* differs if last group is short *)
-    let generations_string = String.concat "_" (L.map (string_of_int % T.time) (A.to_list page_group)) in
+    let generations_string = String.concat "_" (L.map (string_of_int % GS.time) (A.to_list page_group)) in
     let filename = Printf.sprintf "%s%s.pdf" basename generations_string in
     let first_of_two = ref true in (* allows staying with one generation for BothDs *)
     let h = Pl.create ~m:rows ~n:cols filename in
@@ -167,7 +168,7 @@ let make_pdfs ?(leftright=true) ?(pdfdim=ThreeD) ?(rows=1) ?(cols=1)
         let idx = (i * (max_j + 1)) + j in 
         if idx < group_len then  (* don't index past end of a short group *)
           (Pl.set_foreground_color h 0 0 0; (* grid and plot title color *)
-           let T.{time; state}  = page_group.(idx) in
+           let GS.{time; state}  = page_group.(idx) in
            let xs, ys, zs = make_coords sample_interval (simple_sort_dists state) in
            (* pre_title: either a newline (for 3D) plots or an empty string, so that
             *  titles on 3D plots will be pushed down a bit.*)
@@ -207,57 +208,3 @@ let make_setchain_bounds_pdfs ?(addl_2D_fn=fill_bounds)
   make_pdfs ~pdfdim:TwoD ~addl_2D_fn ~colors
             ~leftright ~rows ~cols ~sample_interval ?plot_max ?fontsize
             basename tdistlists
-
-
-(***************************************************)
-(* OBSOLETE OR IN NEED OF ATTENTION *)
-
-(*
-let tdists_list_to_idx_cols finite_tdists_list =
-  let open T in
-  let cols_for_one_tdists td =
-    let len = L.length td.state in
-    Mat.concat_horizontal (Mat.create len 1 (float td.time))
-                          (Mat.of_array (A.of_list td.state) len 1)
-  in
-  let llist_of_mats = T.map cols_for_one_tdists finite_tdists_list in
-  (* concat 'em here *)
-  ()
-*)
-
-
-(*
-let write_csv_tdists_list basename finite_tdists_list =
-  let open T in
-  let first_gen = (T.hd finite_tdists_list).time in
-  let last_gen = (T.last finite_tdists_list).time in
-  let filename = Printf.sprintf "%s%02dto%02d.%s" basename first_gen last_gen "csv" in
-  (* make header row *)
-  (* construct data rows *)
-  (* Mat.save_txt  ...*)
-  ()
-*)
-  
-
-(*
-let tdists_marshal_ext = "mltds"
-(* let datafile_extension = ".mld" *)
-
-(** [write_tdists_finite_list basename finite_tdists_list].
-    Lazy list [finite_tdists_list] must be finite! *)
-let marshal_tdists_list basename finite_tdists_list =
-  let open T in
-  let first_gen = (T.hd finite_tdists_list).time in
-  let last_gen = (T.last finite_tdists_list).time in
-  let filename = Printf.sprintf "%s%02dto%02d.%s" 
-                                 basename first_gen last_gen tdists_marshal_ext in
-  OU.marshal_to_file finite_tdists_list filename
-
-(** Lazy list must be finite! *)
-let marshal_tdists_sublist basename start_gen last_gen tdists_list =
-  marshal_tdists_list basename
-                           (T.subseq start_gen last_gen tdists_list)
-
-let unmarshal_tdists_list filename =
-  ((OU.marshal_from_file filename) : T.genstate_seq)
-*)
