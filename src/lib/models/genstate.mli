@@ -55,7 +55,7 @@ function [is_before]
 *)
 val select_in_order : ('a -> 'a -> bool) -> ('b -> 'a) -> 'a Sq.t -> 'b Sq.t -> 'b Sq.t
 
-(** Identity function (useful with [select]). *)
+(** Identity function. *)
 val id : 'a -> 'a
 
 (** Return a lazy list that's a sublist of the argument, from element start 
