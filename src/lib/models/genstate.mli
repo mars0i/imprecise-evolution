@@ -52,6 +52,8 @@ function [is_before]
     select (>) snd keys vals2 |> Sq.to_list
     - : (string * int) list = [("foo", 2); ("foo", 3); ("foo", 5)]
 ]}
+(This function roughly does what a hashtable or map can do, but doesn't 
+require the data structures needed for arbitary lookups.)
 *)
 val select_in_order : ('a -> 'a -> bool) -> ('b -> 'a) -> 'a Sq.t -> 'b Sq.t -> 'b Sq.t
 
