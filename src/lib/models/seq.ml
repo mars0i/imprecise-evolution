@@ -19,10 +19,14 @@ let drop n seq = S.drop seq n
 let drop_while f seq = S.drop_while ~f seq
 let to_list = S.to_list
 
+let range ?(stride=1) first last =
+  S.range ~start:`inclusive ~stop:`inclusive ~stride first last
+
 (* Note Core.Sequence.range doesn't allow an unbounded sequence. *)
 let ints ?(stride=1) init_n = iterate init_n (fun n -> n + stride)
 
-let subseq start finish ll = S.sub ll start (finish - start + 1)
+
+let subseq start finish ll = S.sub ll ~pos:start ~len:(finish - start + 1)
 
 (* Based on Yaron Minsky's def at https://discuss.ocaml.org/t/how-to-write-map2-for-base-sequence/2090/3?u=mars0i *)
 let map2 f s1 s2 =

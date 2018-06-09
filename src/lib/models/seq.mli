@@ -20,6 +20,8 @@ val drop : int -> 'a S.t -> 'a S.t
 val drop_while : ('a -> bool) -> 'a S.t -> 'a S.t
 val to_list : 'a S.t -> 'a list
 
+val range : ?stride:int -> int -> int -> int S.t
+
 (* Note Core.Sequence.range doesn't allow an unbounded sequence. *)
 (** [ints ~skip:n init_n] returns an infinite sequence of
     integers [~skip] apart starting from [init_n].  [skip]
