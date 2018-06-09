@@ -10,7 +10,7 @@ module Spec = Core.Command.Spec
 module Pl = Owl.Plot
 module WF = Models.Wrightfisher
 module IO = Models.CredalsetIO
-module T = Models.Genstate
+module GS = Models.Genstate
 
 let sprintf = Printf.sprintf
 
@@ -75,8 +75,8 @@ let commandline =
       let altitude = float alt_int in
       let azimuth = float az_int in
       let fitn_recs = WF.group_fitns fitn_floats in
-      let distlists = T.add_times (WF.make_distlists popsize [initfreq] fitn_recs) in
-      let selected_distlists = T.sublist startgen lastgen distlists in
+      let distlists = GS.add_times (WF.make_distlists popsize [initfreq] fitn_recs) in
+      let selected_distlists = GS.sublist startgen lastgen distlists in
       let pdfdim = match twoD, threeD with
                    | true, true   -> IO.BothDs
                    | true, false  -> IO.TwoD
