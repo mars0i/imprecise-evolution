@@ -9,9 +9,21 @@ val tl : 'a S.t -> 'a S.t
 val next : 'a S.t -> ('a * 'a S.t) option
 val is_empty : 'a S.t -> bool
 val nth : 'a S.t -> int -> 'a
+
+(** [cons x xs] adds [x] to sequence [xs].  It might not be efficient, so
+    though it's OK to use it add an element, consider building entire
+    sequences some other way. *)
 val cons : 'a -> 'a S.t -> 'a S.t
+
 val fold_left : ('a -> 'b -> 'a) -> 'a -> 'b S.t -> 'a
 
+(** Sequence-construction functions below with simple names will cache 
+    construction results using [memoize].  The corresponding [*_raw] functions
+    don't do this; those sequence elements will be recomputed each time
+    they are evaluated. *)
+
+(** [memoize xs] returns a sequence in which results of functions that 
+    construct [xs] are cached. *)
 val memoize : 'a S.t -> 'a S.t
 
 (** [map_raw f xs] maps function [f] over sequence [xs] without memoizing
@@ -89,6 +101,8 @@ function [is_before]
     select (>) snd keys vals2 |> S.to_list
     - : (string * int) list = [("foo", 2); ("foo", 3); ("foo", 5)]
 ]}
+Note that since all this function does is to select elements of an existing
+sequence, it doesn't do anything special concerning caching of results.
 (This function roughly does what a hashtable or map can do, but doesn't 
 require the data structures needed for arbitary lookups.)
 *)
@@ -96,4 +110,3 @@ val select_in_order : ('a -> 'a -> bool) -> ('b -> 'a) -> 'a S.t -> 'b S.t -> 'b
 
 (** Identity function. *)
 val id : 'a -> 'a
-
