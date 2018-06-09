@@ -3,7 +3,8 @@
 #load "models.cma";;
 module I  = Models.CredalsetIO;;
 module SC  = Models.Setchains;;
-module T  = Models.Genstate;;
+module GS  = Models.Genstate;;
+module Seq = Models.Seq;;
 module TM = Models.Tranmats;;
 module W  = Models.Wrightfisher;;
 module A  = Models.App_fns;;
