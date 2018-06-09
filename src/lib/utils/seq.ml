@@ -34,6 +34,8 @@ let ints ?(stride=1) init_n = memoize (ints_raw ~stride init_n)
 
 let subseq start finish ll = S.sub ll ~pos:start ~len:(finish - start + 1)
 
+(* Alternative definition: 
+let map2_raw f xs ys = S.map ~f:(fun (x, y) -> f x y) (S.zip xs ys) *)
 (* Based on Yaron Minsky's def at https://discuss.ocaml.org/t/how-to-write-map2-for-base-sequence/2090/3?u=mars0i *)
 let map2_raw f xs1 xs2 =
   S.unfold ~init:(xs1, xs2)
@@ -43,9 +45,6 @@ let map2_raw f xs1 xs2 =
       | Some (x1, rest1), Some (x2, rest2) -> Some (f x1 x2, (rest1, rest2)))
 
 let map2 f xs1 xs2 = memoize (map2_raw f xs1 xs2)
-
-(* Alternative definition: *)
-(* let map2 f xs ys = S.map ~f:(fun (x, y) -> f x y) (S.zip xs ys) *)
 
 let id x = x (* for use by select_in_order *)
 
