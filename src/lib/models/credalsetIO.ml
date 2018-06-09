@@ -7,7 +7,7 @@ module L = Batteries.List
 module A = Batteries.Array
 module G = Utils.Genl
 module GS = Genstate
-(* Also uses Models.Seq *)
+module Seq = Utils.Seq
 
 let (%) f g = (fun x -> f (g x))
 

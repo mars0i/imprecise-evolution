@@ -3,7 +3,7 @@
 (library 
  ((name        utils)
   (public_name utils)
-  (modules (genl))
+  (modules (genl seq))
   (libraries (batteries core owl))
   (ocamlopt_flags (:standard -O3)) ; -dcmm -O3 ; -dcmm dumps intermediate rep
   ))

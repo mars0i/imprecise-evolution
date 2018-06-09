@@ -1,5 +1,5 @@
 module Mat = Owl.Mat
-(* Uses module Models.Seq *)
+module Seq = Utils.Seq
 
 type t = {time : int; state : Mat.mat list}
 type genstate_seq = t Seq.t
