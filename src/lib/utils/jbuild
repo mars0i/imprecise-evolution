@@ -4,6 +4,8 @@
  ((name        utils)
   (public_name utils)
   (modules (genl seq))
-  (libraries (batteries core owl))
+  (libraries (batteries core owl bin_prot))
+  ;(preprocess (pps (ppx_deriving.std)))
+  ;(preprocess (pps (ppx_bin_prot)))
   (ocamlopt_flags (:standard -O3)) ; -dcmm -O3 ; -dcmm dumps intermediate rep
   ))

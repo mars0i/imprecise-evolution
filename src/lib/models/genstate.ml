@@ -5,7 +5,7 @@ module Seq = Utils.Seq
 
 type t = {time : int ; state : Mat.mat list}
 
-type genstate_seq = t Seq.t
+type genstate_seq = t Seq.t (* [@@deriving bin_io] *)
 
 (** accessor, constructor functions: *)
 let time gs = gs.time

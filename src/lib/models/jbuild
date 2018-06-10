@@ -7,5 +7,6 @@
            App_fns))
   (libraries (batteries core owl parmap utils)) ; ppx_deriving.runtime 
   ;(preprocess (pps (ppx_deriving.std)))
+  (preprocess (pps (ppx_bin_prot)))
   (ocamlopt_flags (:standard -O3)) ; -dcmm -O3 ; -dcmm dumps intermediate rep
   ))

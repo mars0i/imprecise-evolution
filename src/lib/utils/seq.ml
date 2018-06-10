@@ -2,7 +2,7 @@
 module S = Core.Sequence
 module Step = S.Step
 
-type 'a t = 'a S.t
+type 'a t = 'a S.t (* [@@deriving bin_io] *)
 
 let memoize = S.memoize
 
