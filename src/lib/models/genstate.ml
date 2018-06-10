@@ -3,9 +3,13 @@
 module Mat = Owl.Mat
 module Seq = Utils.Seq
 
-type t = {time : int ; state : Mat.mat list}
+open Bin_prot.Std    (* for @@deriving bin_prot *)
+open Bin_prot.Common (* for @@deriving bin_prot *)
 
-type genstate_seq = t Seq.t (* [@@deriving bin_io] *)
+
+type t = {time : int ; state : Mat.mat list} (* [@@deriving bin_io] *)
+
+type genstate_seq = t Seq.t
 
 (** accessor, constructor functions: *)
 let time gs = gs.time
