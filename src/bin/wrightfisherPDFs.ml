@@ -39,6 +39,7 @@ Example: %s foo 500 250 2 6  1.0 0.95 0.8  0.8 0.95 1.0"
 let default_alt = 20
 let default_az = 300
 let default_colors = Pl.[RGB (200,0,0)]
+let grayscale_colors = Pl.[RGB (0,0,0)]
 
 let alt_docstring = sprintf "integer aLtitude of perspective: degrees in [0,90] (default: %d)"  default_alt
 let az_docstring =  sprintf "integer aZimuth of perspective: degrees in in [0,360] (default: %d)" default_az
@@ -50,6 +51,7 @@ let sample_docstring = sprintf "sample data to plot only at every nth frequency 
 let twoD_docstring = "make 2D plots; with -3 make 2D and 3D side-by-side (default 3D)"
 let threeD_docstring = "make 3D plots; with -2 make 2D and 3D side-by-side (default 3D)"
 let updown_docstring = "If present arrange plots top bottom right; vs left right down."
+let grayscale_docstring = "If present, use monochrome rather than default colors." 
 
 let commandline =
   Command.basic_spec  (* TODO this is apparently depcrecated, or at least Spec below is. Maybe switch to dbuenzli's cmdliner *)
@@ -65,13 +67,14 @@ let commandline =
                 +> flag "-2" no_arg ~doc:twoD_docstring
                 +> flag "-3" no_arg ~doc:threeD_docstring
                 +> flag "-u" no_arg ~doc:updown_docstring
+		+> flag "-g" no_arg ~doc:grayscale_docstring
                 +> anon ("basename" %: string)
                 +> anon ("popsize" %: int)
                 +> anon ("initfreq" %: int)
                 +> anon ("startgen" %: int)
                 +> anon ("lastgen" %: int)
                 +> anon (sequence ("fitn" %: float)))
-    (fun alt_int az_int rows cols plot_max fontsize sample twoD threeD updown basename popsize initfreq startgen lastgen fitn_floats () ->
+    (fun alt_int az_int rows cols plot_max fontsize sample twoD threeD updown grayscale basename popsize initfreq startgen lastgen fitn_floats () ->
       let altitude = float alt_int in
       let azimuth = float az_int in
       let fitn_recs = WF.group_fitns fitn_floats in
@@ -81,7 +84,7 @@ let commandline =
                    | true, true   -> IO.BothDs
                    | true, false  -> IO.TwoD
                    | false, true | false, false -> IO.ThreeD (* default *)
-      in IO.make_pdfs ~rows ~cols ~sample_interval:sample ~colors:default_colors
+      in IO.make_pdfs ~rows ~cols ~sample_interval:sample ~colors:(if grayscale then grayscale_colors else default_colors)
                       ~altitude ~azimuth ~pdfdim ?plot_max ?fontsize ~leftright:(not updown) 
 		      basename selected_distlists)
 
