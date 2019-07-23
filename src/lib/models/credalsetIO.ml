@@ -18,7 +18,7 @@ let (%) f g = (fun x -> f (g x))
 let default_fontsize = 3.25
 let default_plot_color = Pl.RGB (160, 160, 160)
 let twoD_x_margin = 1.5
-let twoD_y_bottom = ~-.0.012
+let twoD_y_bottom_ratio = 0.09 (* When fixed y-scale is selected, adds a bit at the bottom so curve doesn't overlap ticks *)
 let twoD_line_width = 1.
 let interval_fill_color = default_plot_color
 (* let interval_fill_color = Pl.RGB (180, 180, 180) *)
@@ -94,7 +94,7 @@ let add_2D_plot ?plot_max ?fontsize ?colors ?addl_2D_fn h ys zs =  (* Note ys ar
   let m, n = Mat.shape ys in
   Pl.set_xrange h (~-. twoD_x_margin) ((float m) +. twoD_x_margin);
   (match plot_max with                                        (* even at end of fn so you don't forget if move it *)
-  | Some y -> Pl.set_yrange h twoD_y_bottom y
+  | Some y -> Pl.set_yrange h  (-.(y *. twoD_y_bottom_ratio))  y
   | None -> ()); (* I'd like to apply the lower margin here, too, but needs Plplot guts to hack default margins process *)
   (* Add addl plot stuff if a function was passed: *)
   (match addl_2D_fn with | Some f -> f h ys zs | None -> ()); (* bare matches should always be wrapped *)
