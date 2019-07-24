@@ -4,10 +4,17 @@ module S = Core.Sequence
 
 type 'a t = 'a S.t
 
+(** [hd seq] returns the first element in [seq].
+    Should raise an exception if applied to an empty sequence. *)
 val hd : 'a S.t -> 'a
+
+(** [tl seq] returns the rest of the [seq] without the first element. 
+    Should raise an exception if applied to an empty sequence. *)
 val tl : 'a S.t -> 'a S.t
-val next : 'a S.t -> ('a * 'a S.t) option
+
+(** [is_empty seq] returns [true] if [seq] empty, otherwise [false]. *)
 val is_empty : 'a S.t -> bool
+val next : 'a S.t -> ('a * 'a S.t) option
 val nth : 'a S.t -> int -> 'a
 
 (** [cons x xs] adds [x] to sequence [xs].  It might not be efficient, so

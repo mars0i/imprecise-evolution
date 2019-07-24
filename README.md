@@ -91,7 +91,7 @@ continuous "interval" of probability distributions.
 
 #### credalsetIO.ml: Generate data files and PDF plots
 
-Creates data files and PDFs from distlists.
+Creates data files and PDF files from distlists.
 
 ### src/lib/utils
 
@@ -108,9 +108,12 @@ including:
 
 ### src/bin
 
-#### wrightfisherPDFs.ml: program to generate Wright-Fisher model PDFs
+#### wrightfisherPDFs.ml: program to generate Wright-Fisher model PDF files.
+Note that you're not restricted to imprecise-probability models.  You
+can use this program to create plots for standard, precise-probability
+Wright-Fisher diploid models.
 
-#### setchainPDFs.ml: program to generate set-chain PDFs
+#### setchainPDFs.ml: program to generate set-chain PDF files.
 
 #### setchaintest.ml: miscellaneous tests for setchains.ml
 
