@@ -108,14 +108,20 @@ including:
 
 ### src/bin
 
+Once you have installed OCaml 4.06.1 and the necessary libraries (a
+big job), you should be able to build executable files for the
+following by entering `make` in the root directory of the repo.
+The exe files should show up in _build/default/src/bin.
+
 #### wrightfisherPDFs.ml: program to generate Wright-Fisher model PDF files.
-Note that you're not restricted to imprecise-probability models.  You
+(Note that you're not restricted to imprecise-probability models.  You
 can use this program to create plots for standard, precise-probability
-Wright-Fisher diploid models.
+Wright-Fisher diploid models.)
 
 #### setchainPDFs.ml: program to generate set-chain PDF files.
 
 #### setchaintest.ml: miscellaneous tests for setchains.ml
+
 
 
 ### doc
