@@ -25,7 +25,7 @@ let next_dists tranmats dists =
 (** Given a list of transition matrices and a list of initial distributions
     (often one distribution with all weight on one frequency),
     return a lazy list of lists of probability distributions.
-    Note this function does not not drop the first element. That way, the 
+    Note this function does not drop the first element. That way, the 
     number of dists in the nth distlist = (length tranmats)**n for one 
     initial distribution.  e.g. with
     two transition matrices and one initial distribution,
