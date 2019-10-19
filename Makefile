@@ -2,12 +2,12 @@
 all: build
 
 build:
-	jbuilder build @install
+	dune build @install
 
 doc: _build
-	jbuilder build @doc
+	dune build @doc
 
 clean:
-	jbuilder clean
+	dune clean
 
 #	/bin/rm -Rf _build *.install
