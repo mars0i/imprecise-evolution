@@ -2,7 +2,6 @@
 
 module Mat = Owl.Mat
 module Pl = Owl_plplot
-module OU = Owl.Utils
 module L = Batteries.List
 module A = Batteries.Array
 module G = Utils.Genl
