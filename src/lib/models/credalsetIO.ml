@@ -77,7 +77,7 @@ let add_3D_plot ?plot_max ?fontsize ?colors ?addl_3D_fn h altitude azimuth xs ys
 
 (* Kludge to allow running with vanilla Owl that doesn't include it: *)
 (* let set_ydigits h n = () *)
-let set_ydigits h n = Plplot.plsyax n 0
+let set_ydigits _h n = Plplot.plsyax n 0
 
 
 (** Add a single 2D plot to handle h. To be used with make_pdfs.  *)
@@ -150,7 +150,7 @@ let make_pdfs ?(leftright=true) ?(pdfdim=ThreeD) ?(rows=1) ?(cols=1)
    * length array are lists of vectors for a plot on rowsXcols sized page of plots. *)
   let page_groups = make_page_groups pdfdim plots_per_page tdistlists in
   (* fn to be applied to each array of lists of vectors to create a page: *)
-  let make_pdf group_idx page_group = 
+  let make_pdf _group_idx page_group = 
     (* Construct filename from basename and generation numbers: *)
     let group_len = A.length page_group in  (* differs if last group is short *)
     let generations_string = String.concat "_" (L.map (string_of_int % GS.time) (A.to_list page_group)) in
