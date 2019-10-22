@@ -7,7 +7,7 @@
 
 module Command = Core.Command
 module Spec = Core.Command.Spec
-module Pl = Owl.Plot
+module Pl = Owl_plplot.Plot
 module WF = Models.Wrightfisher
 module IO = Models.CredalsetIO
 module GS = Models.Genstate
