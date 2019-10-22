@@ -1,7 +1,7 @@
 (** Functions for creating files from sequences of distributions of credal sets. *)
 
 module Mat = Owl.Mat
-module Pl = Owl_plplot
+module Pl = Owl_plplot.Plot
 module L = Batteries.List
 module A = Batteries.Array
 module G = Utils.Genl
