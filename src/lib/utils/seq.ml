@@ -2,8 +2,8 @@
 module S = Core.Sequence
 module Step = S.Step
 
-open Bin_prot.Std    (* for @@deriving bin_prot *)
-open Bin_prot.Common (* for @@deriving bin_prot *)
+(* open Bin_prot.Std *)   (* for @@deriving bin_prot *)
+(* open Bin_prot.Common *) (* for @@deriving bin_prot *)
 
 
 type 'a t = 'a S.t (* [@@deriving bin_io] *)

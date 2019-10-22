@@ -3,8 +3,8 @@
 module Mat = Owl.Mat
 module Seq = Utils.Seq
 
-open Bin_prot.Std    (* for @@deriving bin_prot *)
-open Bin_prot.Common (* for @@deriving bin_prot *)
+(* open Bin_prot.Std *)   (* for @@deriving bin_prot *) 
+(* open Bin_prot.Common *) (* for @@deriving bin_prot *)
 
 type t = {time : int ; state : Mat.mat list} (* [@@deriving bin_io] *)
 
