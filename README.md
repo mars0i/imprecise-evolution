@@ -122,6 +122,11 @@ Wright-Fisher diploid models.)
 
 #### setchaintest.ml: miscellaneous tests for setchains.ml
 
+(I last compiled the executable using *OCaml* 4.06.1
+and *jbuilder* 1.0+beta20.  jbuilder has subsequently been renamed to *dune*, and there
+have been some significant changes in both OCaml, dune, and the libraries on which
+my code depends, so you may have to install old versions of packages to get this to
+work without modification.)
 
 
 ### doc
